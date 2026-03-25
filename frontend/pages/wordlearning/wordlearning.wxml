@@ -1,0 +1,153 @@
+<!-- pages/wordlearning/wordlearning.wxml -->
+<view class="container">
+
+  <!-- 进度条 -->
+  <view class="progress-section">
+    <view class="progress-info">
+      <text class="progress-stage">{{stage === 1 ? 'PREVIEW' : stage === 2 ? 'TEST' : 'DONE'}}</text>
+      <text class="progress-pct">{{progress}}%</text>
+    </view>
+    <view class="progress-bar-bg">
+      <view class="progress-bar-fill" style="width: {{progress}}%"></view>
+    </view>
+  </view>
+
+  <!-- 预筛选阶段 -->
+  <view class="content" wx:if="{{stage === 1}}">
+    <view class="word-card">
+      <view class="word-header">
+        <view class="word-header-top">
+          <text class="word-text">{{currentWord.word}}</text>
+          <view class="star-btn {{isFavorited ? 'active' : ''}}" bindtap="toggleFavorite">
+            <text class="star-icon">{{isFavorited ? '★' : '☆'}}</text>
+          </view>
+        </view>
+        <text class="pronunciation" wx:if="{{currentWord.pronunciation}}">[{{currentWord.pronunciation}}]</text>
+      </view>
+
+      <view class="meaning-section" wx:if="{{showMeaning}}">
+        <text class="meaning-label">释义</text>
+        <text class="meaning-text">{{currentWord.meaning}}</text>
+      </view>
+
+      <view class="hint" wx:if="{{!showMeaning}}">
+        <text>你认识这个单词吗？</text>
+      </view>
+    </view>
+
+    <view class="action-buttons">
+      <block wx:if="{{!showMeaning}}">
+        <button class="btn-know" bindtap="onKnow">认识</button>
+        <button class="btn-unknown" bindtap="onUnknown">不认识</button>
+      </block>
+      <block wx:else>
+        <button class="btn-wrong" wx:if="{{!isKnown}}" bindtap="nextWord">记错了，需要测试</button>
+        <button class="btn-next" wx:if="{{isKnown}}" bindtap="nextWord">下一个（7天后复习）</button>
+      </block>
+    </view>
+
+    <view class="stats">
+      <view class="stat-item">
+        <text class="stat-value">{{knownCount}}</text>
+        <text class="stat-label">认识</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{unknownCount}}</text>
+        <text class="stat-label">不认识</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{totalWords - currentWordIndex - 1}}</text>
+        <text class="stat-label">剩余</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 测试阶段 -->
+  <view class="content" wx:elif="{{stage === 2}}">
+    <view class="word-card">
+      <view class="word-header">
+        <view class="word-header-top">
+          <text class="word-text">{{currentWord.word}}</text>
+          <view class="star-btn {{isFavorited ? 'active' : ''}}" bindtap="toggleFavorite">
+            <text class="star-icon">{{isFavorited ? '★' : '☆'}}</text>
+          </view>
+        </view>
+        <text class="pronunciation" wx:if="{{currentWord.pronunciation}}">[{{currentWord.pronunciation}}]</text>
+      </view>
+
+      <view class="test-question">
+        <text>选择正确的释义：</text>
+      </view>
+
+      <view class="test-options">
+        <view
+          class="option-item {{selectedOption === index ? (isTestCorrect ? 'correct' : 'wrong') : ''}}"
+          wx:for="{{testOptions}}"
+          wx:key="index"
+          data-index="{{index}}"
+          bindtap="selectTestOption"
+        >{{item}}</view>
+      </view>
+
+      <view class="test-feedback" wx:if="{{showTestResult}}">
+        <text class="feedback-icon">{{isTestCorrect ? '✓' : '✗'}}</text>
+        <text class="feedback-text">{{isTestCorrect ? '回答正确！' : '回答错误！'}}</text>
+        <text class="feedback-hint" wx:if="{{!isTestCorrect}}">正确答案：{{currentWord.meaning}}</text>
+      </view>
+    </view>
+
+    <view class="action-buttons" wx:if="{{showTestResult}}">
+      <button class="btn-next-test" bindtap="nextTestWord">
+        {{isTestCorrect ? '下一个测试' : '重新测试'}}
+      </button>
+    </view>
+
+    <view class="stats">
+      <view class="stat-item">
+        <text class="stat-value">{{testedCount}}</text>
+        <text class="stat-label">已测试</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{testWords.length}}</text>
+        <text class="stat-label">待测试</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{knownCount}}</text>
+        <text class="stat-label">已掌握</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 完成阶段 -->
+  <view class="completion" wx:elif="{{stage === 3}}">
+    <view class="completion-content">
+      <text class="completion-icon">🎉</text>
+      <text class="completion-title">今日学习完成！</text>
+      <view class="completion-stats">
+        <view class="completion-stat">
+          <text class="stat-value">{{knownCount}}</text>
+          <text class="stat-label">个单词已掌握（7天后复习）</text>
+        </view>
+        <view class="completion-stat">
+          <text class="stat-value">{{testedCount}}</text>
+          <text class="stat-label">个单词已测试</text>
+        </view>
+        <view class="completion-stat">
+          <text class="stat-value">{{totalWords}}</text>
+          <text class="stat-label">个单词已完成</text>
+        </view>
+      </view>
+      <view class="completion-actions">
+        <button class="btn-again" bindtap="goToSpellingTest">✏️ 开始拼写测试</button>
+        <button class="btn-home" bindtap="goBackToStudy">跳过，继续学习</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+</view>

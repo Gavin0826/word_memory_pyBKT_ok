@@ -1,0 +1,81 @@
+<!-- pages/admin-user-stats/admin-user-stats.wxml -->
+<view class="container">
+  <view class="header">
+    <view class="header-back" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">{{username}} 的学习进度</text>
+    <view style="width:80rpx"></view>
+  </view>
+
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+  <view wx:if="{{!loading}}">
+    <!-- 用户基本信息 -->
+    <view class="user-card" wx:if="{{userInfo}}">
+      <view class="user-avatar"><text>{{username[0]}}</text></view>
+      <view class="user-detail">
+        <text class="user-name">{{userInfo.username}}</text>
+        <text class="user-email">{{userInfo.email || '未设置邮箱'}}</text>
+        <text class="user-join">注册于 {{userInfo.createdAt}}</text>
+      </view>
+    </view>
+
+    <!-- 统计数据 -->
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-val orange">{{userInfo.totalWords || 0}}</text>
+        <text class="stat-lab">累计掌握</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-val green">{{userInfo.studiedDays || 0}}</text>
+        <text class="stat-lab">学习天数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-val blue">{{correctRate}}%</text>
+        <text class="stat-lab">正确率</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-val purple">{{totalRecords}}</text>
+        <text class="stat-lab">学习记录</text>
+      </view>
+    </view>
+
+    <!-- 词库进度 -->
+    <view class="section-title">词库学习进度</view>
+    <view class="progress-card">
+      <view class="progress-row">
+        <text class="progress-label">CET-4</text>
+        <text class="progress-count">{{cet4Learned}} / 3739</text>
+      </view>
+      <view class="progress-bar-bg">
+        <view class="progress-bar-fill orange" style="width:{{cet4Learned/3739*100}}%"></view>
+      </view>
+      <view class="progress-row" style="margin-top:30rpx">
+        <text class="progress-label">CET-6</text>
+        <text class="progress-count">{{cet6Learned}} / 2078</text>
+      </view>
+      <view class="progress-bar-bg">
+        <view class="progress-bar-fill blue" style="width:{{cet6Learned/2078*100}}%"></view>
+      </view>
+    </view>
+
+    <!-- 最近学习记录 -->
+    <view class="section-title">最近学习记录（最多20条）</view>
+    <view class="records-list" wx:if="{{studyRecords.length > 0}}">
+      <view class="record-item" wx:for="{{studyRecords}}" wx:key="id">
+        <view class="record-word">
+          <text class="rw-text">{{item.word.word}}</text>
+          <text class="rw-cat">{{item.word.category}}</text>
+        </view>
+        <view class="record-result {{item.isCorrect ? 'correct' : 'wrong'}}">
+          <text>{{item.isCorrect ? '✓' : '✗'}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:if="{{studyRecords.length === 0}}">
+      <text class="empty-text">该用户暂无学习记录</text>
+    </view>
+  </view>
+</view>

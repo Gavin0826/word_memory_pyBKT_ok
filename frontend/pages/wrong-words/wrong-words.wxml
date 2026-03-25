@@ -1,0 +1,188 @@
+<!-- pages/wrong-words/wrong-words.wxml -->
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="header-top">
+      <text class="header-title">错词本</text>
+      <text class="header-close" bindtap="goBack">✕</text>
+    </view>
+    
+    <!-- 统计信息 -->
+    <view class="stats-bar">
+      <view class="stat-item">
+        <text class="stat-label">总错误次数</text>
+        <text class="stat-value">{{totalWrongCount}}</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-label">不同单词</text>
+        <text class="stat-value">{{uniqueWrongCount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索和筛选 -->
+  <view class="search-filter-section">
+    <!-- 搜索框 -->
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="搜索单词或释义"
+        value="{{searchText}}"
+        bindinput="onSearchInput"
+        placeholder-class="search-placeholder"
+      />
+      <text 
+        class="search-clear" 
+        wx:if="{{searchText}}"
+        bindtap="clearSearch"
+      >✕</text>
+    </view>
+
+    <!-- 排序和筛选按钮 -->
+    <view class="filter-buttons">
+      <view class="button-group">
+        <button 
+          class="filter-btn {{sortBy === 'count' ? 'active' : ''}}"
+          data-sort="count"
+          bindtap="changeSortBy"
+          size="mini"
+        >
+          按错误次数
+        </button>
+        <button 
+          class="filter-btn {{sortBy === 'time' ? 'active' : ''}}"
+          data-sort="time"
+          bindtap="changeSortBy"
+          size="mini"
+        >
+          按最近错误
+        </button>
+      </view>
+
+      <view class="button-group">
+        <button 
+          class="filter-btn {{filterDifficulty === 'all' ? 'active' : ''}}"
+          data-difficulty="all"
+          bindtap="changeDifficultyFilter"
+          size="mini"
+        >
+          全部难度
+        </button>
+        <button 
+          class="filter-btn {{filterDifficulty === 'easy' ? 'active' : ''}}"
+          data-difficulty="easy"
+          bindtap="changeDifficultyFilter"
+          size="mini"
+        >
+          简单
+        </button>
+        <button 
+          class="filter-btn {{filterDifficulty === 'medium' ? 'active' : ''}}"
+          data-difficulty="medium"
+          bindtap="changeDifficultyFilter"
+          size="mini"
+        >
+          中等
+        </button>
+        <button 
+          class="filter-btn {{filterDifficulty === 'hard' ? 'active' : ''}}"
+          data-difficulty="hard"
+          bindtap="changeDifficultyFilter"
+          size="mini"
+        >
+          困难
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 错词列表 -->
+  <view class="wrong-words-list" wx:if="{{filteredWords.length > 0 && !loading}}">
+    <view class="list-header">
+      <text class="list-count">共 {{filteredWords.length}} 个单词</text>
+    </view>
+
+    <view class="word-items">
+      <block wx:for="{{filteredWords}}" wx:key="id">
+        <view class="word-item">
+          <!-- 单词主要信息 -->
+          <view class="word-main" bindtap="viewWordDetail" data-word="{{item}}">
+            <view class="word-header">
+              <text class="word-text">{{item.word}}</text>
+              <text 
+                class="difficulty-badge"
+                style="background-color: {{getDifficultyColor(item.difficulty)}}"
+              >
+                {{getDifficultyText(item.difficulty)}}
+              </text>
+            </view>
+
+            <view class="word-pronunciation" wx:if="{{item.pronunciation}}">
+              <text>[{{item.pronunciation}}]</text>
+            </view>
+
+            <view class="word-meaning">
+              <text>{{item.meaning}}</text>
+            </view>
+          </view>
+
+          <!-- 错误统计 -->
+          <view class="word-stats">
+            <view class="stat-box">
+              <text class="stat-label">错误次数</text>
+              <text class="stat-number">{{item.wrongCount}}</text>
+            </view>
+
+            <view class="stat-box">
+              <text class="stat-label">最近错误</text>
+              <text class="stat-time">{{formatTime(item.lastWrongTime)}}</text>
+            </view>
+          </view>
+
+          <!-- 操作按钮 -->
+          <view class="word-actions">
+            <button 
+              class="action-btn delete-btn"
+              size="mini"
+              data-index="{{index}}"
+              bindtap="deleteWrongWord"
+            >
+              删除
+            </button>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="bottom-actions" wx:if="{{uniqueWrongCount > 0}}">
+      <button 
+        class="btn-clear-all"
+        type="warn"
+        bindtap="clearAllWrongWords"
+      >
+        清空所有错词
+      </button>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{filteredWords.length === 0 && !loading}}">
+    <text class="empty-icon">🎉</text>
+    <text class="empty-title">
+      {{searchText || filterDifficulty !== 'all' ? '没有找到匹配的单词' : '暂无错词'}}
+    </text>
+    <text class="empty-desc">
+      {{searchText || filterDifficulty !== 'all' ? '尝试调整搜索或筛选条件' : '继续加油，争取不出错！'}}
+    </text>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+</view>

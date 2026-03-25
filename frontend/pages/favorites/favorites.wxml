@@ -1,0 +1,53 @@
+<!-- pages/favorites/favorites.wxml -->
+<view class="container">
+
+  <!-- 顶部 Header -->
+  <view class="header">
+    <view class="header-inner">
+      <view class="header-left">
+        <text class="header-label">MY FAVORITES</text>
+        <text class="header-title">收藏夹</text>
+      </view>
+      <view class="header-badge">
+        <text class="badge-num">{{favorites.length}}</text>
+        <text class="badge-label">个单词</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收藏列表 -->
+  <view class="list-section" wx:if="{{favorites.length > 0 && !loading}}">
+    <view class="word-card" wx:for="{{favorites}}" wx:key="wordId">
+      <view class="card-top">
+        <view class="word-info">
+          <text class="word-text">{{item.word}}</text>
+          <text class="word-pron" wx:if="{{item.pronunciation}}">[{{item.pronunciation}}]</text>
+        </view>
+        <view class="card-actions">
+          <view class="category-tag">{{item.category}}</view>
+          <view class="star-btn active" bindtap="removeFavorite" data-wordid="{{item.wordId}}">
+            <text class="star-icon">★</text>
+          </view>
+        </view>
+      </view>
+      <view class="card-bottom">
+        <text class="word-meaning">{{item.meaning}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{favorites.length === 0 && !loading}}">
+    <text class="empty-icon">☆</text>
+    <text class="empty-title">还没有收藏的单词</text>
+    <text class="empty-desc">学习或复习时点击 ★ 收藏单词</text>
+    <button class="btn-go-study" bindtap="goToStudy">去学习</button>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+</view>

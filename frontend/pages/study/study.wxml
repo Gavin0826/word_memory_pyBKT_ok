@@ -1,0 +1,44 @@
+<!-- pages/study/study.wxml -->
+<view class="container">
+
+  <!-- 顶部 Header -->
+  <view class="header">
+    <text class="header-label">SELECT LIBRARY</text>
+    <text class="title">选择词库</text>
+    <text class="subtitle">根据学习目标选择词库开始学习</text>
+  </view>
+
+  <!-- 词库列表 -->
+  <view class="category-list">
+    <text class="list-label">AVAILABLE LIBRARIES</text>
+
+    <view
+      class="category-card {{item.id === 'CET-4' ? 'cet4' : item.id === 'CET-6' ? 'cet6' : 'kaoyan'}}"
+      wx:for="{{categories}}"
+      wx:key="id"
+      data-category="{{item.id}}"
+      bindtap="selectCategory"
+    >
+      <view class="card-content">
+        <view class="card-header">
+          <text class="category-name">{{item.name}}</text>
+          <text class="category-count">{{item.count}} 词</text>
+        </view>
+        <text class="category-desc">{{item.desc}}</text>
+      </view>
+      <view class="card-arrow">›</view>
+    </view>
+  </view>
+
+  <view class="footer">
+    <view class="footer-actions">
+      <view class="favorite-entry" bindtap="goToFavorites">
+        <text class="favorite-entry-icon">★</text>
+        <text class="favorite-entry-text">我的收藏</text>
+        <text class="favorite-entry-count" wx:if="{{favoritesCount > 0}}">{{favoritesCount}}</text>
+      </view>
+      <button class="btn-back" bindtap="goBack">返回首页</button>
+    </view>
+  </view>
+
+</view>

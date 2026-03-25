@@ -1,0 +1,117 @@
+<!-- pages/mine/mine.wxml -->
+<view class="container">
+
+  <!-- 用户信息区域 -->
+  <view class="user-section" wx:if="{{userInfo}}">
+    <view class="user-header">
+      <view class="user-avatar">
+        <text class="avatar-text">{{avatarText}}</text>
+      </view>
+      <view class="user-details">
+        <text class="username">{{userInfo.username}}</text>
+        <text class="user-id">ID: {{userInfo.id}}</text>
+      </view>
+    </view>
+
+    <!-- 学习统计 -->
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalWords || 0}}</text>
+        <text class="stat-label">学习单词</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.consecutiveDays || 0}}</text>
+        <text class="stat-label">连续天数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.accuracy || 0}}%</text>
+        <text class="stat-label">正确率</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalTime || '0分钟'}}</text>
+        <text class="stat-label">学习时长</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="function-list">
+    <view class="list-title">学习管理</view>
+
+    <view class="function-item" bindtap="goToStudySettings">
+      <view class="function-left">
+        <text class="function-icon">⚙️</text>
+        <text class="function-text">学习设置</text>
+      </view>
+      <text class="function-arrow">›</text>
+    </view>
+
+    <view class="function-item" bindtap="goToWrongWords">
+      <view class="function-left">
+        <text class="function-icon">❌</text>
+        <text class="function-text">错词本</text>
+        <text class="function-badge" wx:if="{{wrongWordsCount > 0}}">{{wrongWordsCount}}</text>
+      </view>
+      <text class="function-arrow">›</text>
+    </view>
+
+    <view class="function-item" bindtap="goToWordStats">
+      <view class="function-left">
+        <text class="function-icon">📊</text>
+        <text class="function-text">学习统计</text>
+      </view>
+      <text class="function-arrow">›</text>
+    </view>
+
+    <view class="function-item" bindtap="goToAbout">
+      <view class="function-left">
+        <text class="function-icon">ℹ️</text>
+        <text class="function-text">关于我们</text>
+      </view>
+      <text class="function-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 系统设置 -->
+  <view class="function-list">
+    <view class="list-title">系统设置</view>
+
+    <view class="function-item" bindtap="clearCache">
+      <view class="function-left">
+        <text class="function-icon">🗑️</text>
+        <text class="function-text">清理缓存</text>
+      </view>
+      <text class="function-arrow">›</text>
+    </view>
+
+    <view class="function-item" bindtap="checkUpdate">
+      <view class="function-left">
+        <text class="function-icon">🔄</text>
+        <text class="function-text">检查更新</text>
+        <text class="function-tag" wx:if="{{hasUpdate}}">新版本</text>
+      </view>
+      <text class="function-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="btn-logout" type="warn" bindtap="logout" wx:if="{{userInfo}}">
+      退出登录
+    </button>
+    <button class="btn-login" type="primary" bindtap="goToLogin" wx:else>
+      登录 / 注册
+    </button>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info">
+    <text>单词记忆系统 v1.0.0</text>
+    <text>© 2026 毕业设计项目</text>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+</view>

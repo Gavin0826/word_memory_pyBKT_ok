@@ -1,0 +1,31 @@
+=== pyBKT 轻量数据集报告 ===
+输入文件: D:\WordMemory_System\python\skill_builder_bkt_ready.csv
+输出文件: D:\WordMemory_System\python\skill_builder_bkt_lite.csv
+
+原始行数: 446844
+精简后行数: 20000
+压缩比例: 95.52%
+
+原始用户数: 4151
+精简后用户数: 649
+原始技能数: 110
+精简后技能数: 15
+精简后正确率: 73.34%
+
+参数:
+- TOP_SKILLS = 15
+- MAX_ROWS_PER_SKILL = 1500
+- MAX_ROWS_PER_USER_SKILL = 20
+- MAX_TOTAL_ROWS = 20000
+
+Top 10 skills after sampling:
+- Addition and Subtraction Fractions: 1489
+- Area Triangle: 1485
+- Area Rectangle: 1473
+- Ordering Fractions: 1470
+- Volume Cylinder: 1460
+- Area Trapezoid: 1441
+- Equation Solving Two or Fewer Steps: 1434
+- Volume Rectangular Prism: 1418
+- Conversion of Fraction Decimals Percents: 1416
+- Multiplication and Division Integers: 1300

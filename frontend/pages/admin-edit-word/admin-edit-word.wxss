@@ -1,0 +1,46 @@
+/* pages/admin-edit-word/admin-edit-word.wxss */
+.container { min-height: 100vh; background: #f4f5f7; padding-bottom: 60rpx; }
+.header { background: linear-gradient(135deg, #FF6B35, #FF8C42); padding: 80rpx 30rpx 30rpx; display: flex; align-items: center; justify-content: space-between; }
+.header-back text, .header-action text { font-size: 30rpx; color: white; }
+.header-action { padding: 10rpx 20rpx; background: rgba(255,255,255,0.2); border-radius: 20rpx; }
+.header-title { font-size: 32rpx; font-weight: bold; color: white; flex: 1; text-align: center; }
+.search-bar { padding: 20rpx 24rpx 10rpx; }
+.search-input { background: white; border-radius: 40rpx; padding: 18rpx 30rpx; font-size: 28rpx; box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.06); }
+.list-meta { padding: 8rpx 30rpx 10rpx; font-size: 24rpx; color: #999; }
+.loading-wrap { display: flex; flex-direction: column; align-items: center; padding: 60rpx; gap: 20rpx; }
+.loading-spinner { width: 60rpx; height: 60rpx; border: 6rpx solid #f3f3f3; border-top: 6rpx solid #FF6B35; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.word-list { padding: 0 24rpx; }
+.word-item { background: white; border-radius: 16rpx; padding: 24rpx; margin-bottom: 16rpx; box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05); }
+.word-main { display: flex; align-items: center; gap: 16rpx; margin-bottom: 10rpx; }
+.word-text { font-size: 34rpx; font-weight: bold; color: #222; }
+.word-pron { font-size: 24rpx; color: #999; flex: 1; }
+.word-tag { font-size: 20rpx; padding: 4rpx 14rpx; border-radius: 20rpx; }
+.word-tag.easy { background: #E8F5E9; color: #388E3C; }
+.word-tag.medium { background: #FFF8E1; color: #F57C00; }
+.word-tag.hard { background: #FFEBEE; color: #D32F2F; }
+.word-meaning { font-size: 26rpx; color: #555; display: block; margin-bottom: 16rpx; line-height: 1.5; }
+.word-actions { display: flex; gap: 16rpx; justify-content: flex-end; }
+.action-btn { padding: 10rpx 28rpx; border-radius: 20rpx; font-size: 24rpx; }
+.edit-btn { background: #E3F2FD; color: #1976D2; }
+.delete-btn { background: #FFEBEE; color: #D32F2F; }
+.empty-tip { display: flex; flex-direction: column; align-items: center; padding: 80rpx 0; gap: 20rpx; }
+.empty-icon { font-size: 100rpx; }
+.empty-text { font-size: 28rpx; color: #999; }
+.pagination { display: flex; justify-content: center; align-items: center; gap: 40rpx; padding: 30rpx; }
+.page-btn { padding: 16rpx 40rpx; background: #FF6B35; color: white; border-radius: 30rpx; font-size: 28rpx; }
+.page-btn.disabled { background: #ccc; }
+.page-info { font-size: 28rpx; color: #666; }
+.modal-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; }
+.modal { position: fixed; left: 40rpx; right: 40rpx; top: 50%; transform: translateY(-50%); background: white; border-radius: 20rpx; padding: 40rpx; z-index: 101; max-height: 80vh; overflow-y: auto; }
+.modal-title { font-size: 36rpx; font-weight: bold; color: #333; display: block; margin-bottom: 30rpx; text-align: center; }
+.modal-form { margin-bottom: 30rpx; }
+.modal-input { border: 2rpx solid #e0e0e0; border-radius: 10rpx; padding: 20rpx; font-size: 28rpx; margin-bottom: 20rpx; width: 100%; box-sizing: border-box; }
+.modal-textarea { border: 2rpx solid #e0e0e0; border-radius: 10rpx; padding: 20rpx; font-size: 28rpx; margin-bottom: 20rpx; width: 100%; box-sizing: border-box; height: 130rpx; }
+.radio-group { display: flex; gap: 16rpx; flex-wrap: wrap; margin-top: 10rpx; }
+.radio-item { padding: 12rpx 28rpx; border-radius: 40rpx; border: 2rpx solid #e0e0e0; font-size: 26rpx; color: #666; }
+.radio-item.active { border-color: #FF6B35; background: #FFF3EE; color: #FF6B35; font-weight: bold; }
+.modal-btns { display: flex; gap: 20rpx; }
+.modal-btn { flex: 1; text-align: center; padding: 24rpx; border-radius: 12rpx; font-size: 30rpx; font-weight: bold; }
+.modal-btn.cancel { background: #f5f5f5; color: #666; }
+.modal-btn.confirm { background: linear-gradient(135deg, #FF6B35, #FF8C42); color: white; }

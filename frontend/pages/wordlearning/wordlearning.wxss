@@ -1,0 +1,458 @@
+/* ==============================
+   单词学习页样式
+   ============================== */
+
+.container {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 48rpx;
+}
+
+/* 五角星收藏按钮 */
+.word-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.star-btn {
+  width: 72rpx; height: 72rpx;
+  border-radius: 50%;
+  background: rgba(26,39,68,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  transition: all 0.2s;
+}
+
+.star-btn.active {
+  background: rgba(245,166,35,0.15);
+}
+
+.star-icon {
+  font-size: 44rpx;
+  color: #d0d0d0;
+  line-height: 1;
+}
+
+.star-btn.active .star-icon {
+  color: var(--color-accent);
+}
+
+/* 进度区域 */
+.progress-section {
+  background: var(--grad-card);
+  padding: 60rpx 40rpx 40rpx;
+  position: relative;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.progress-stage {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 3rpx;
+}
+
+.progress-pct {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+.progress-bar-bg {
+  height: 8rpx;
+  background: rgba(255,255,255,0.12);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--grad-accent);
+  border-radius: 8rpx;
+  transition: width 0.4s ease;
+}
+
+/* 主内容 */
+.content {
+  flex: 1;
+  padding: 32rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 单词卡片 */
+.word-card {
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  padding: 56rpx 48rpx;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 32rpx;
+  min-height: 360rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.word-card::before {
+  content: '';
+  position: absolute;
+  top: -60rpx;
+  right: -60rpx;
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 50%;
+  background: rgba(26, 39, 68, 0.03);
+}
+
+.word-header {
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+.word-text {
+  font-size: 80rpx;
+  font-weight: 900;
+  color: var(--color-text-primary);
+  display: block;
+  letter-spacing: 2rpx;
+  margin-bottom: 16rpx;
+}
+
+.pronunciation {
+  font-size: 30rpx;
+  color: var(--color-accent);
+  display: block;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* 释义区域 */
+.meaning-section {
+  border-top: 2rpx solid var(--color-border);
+  padding-top: 32rpx;
+  margin-top: 8rpx;
+  text-align: center;
+}
+
+.meaning-label {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  letter-spacing: 2rpx;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.meaning-text {
+  font-size: 36rpx;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  display: block;
+  line-height: 1.5;
+}
+
+.hint {
+  text-align: center;
+  padding: 24rpx 0;
+}
+
+.hint text {
+  font-size: 28rpx;
+  color: var(--color-text-muted);
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.btn-know {
+  flex: 1;
+  height: 96rpx;
+  background: var(--grad-accent) !important;
+  color: #1a2744 !important;
+  font-size: 32rpx;
+  font-weight: 800;
+  border-radius: var(--radius-xl) !important;
+  border: none !important;
+  box-shadow: var(--shadow-accent);
+  letter-spacing: 2rpx;
+}
+
+.btn-unknown {
+  flex: 1;
+  height: 96rpx;
+  background: rgba(26,39,68,0.06) !important;
+  color: var(--color-text-secondary) !important;
+  font-size: 32rpx;
+  font-weight: 700;
+  border-radius: var(--radius-xl) !important;
+  border: 2rpx solid var(--color-border) !important;
+}
+
+.btn-next, .btn-next-test {
+  flex: 1;
+  height: 96rpx;
+  background: var(--grad-accent) !important;
+  color: #1a2744 !important;
+  font-size: 32rpx;
+  font-weight: 800;
+  border-radius: var(--radius-xl) !important;
+  border: none !important;
+  box-shadow: var(--shadow-accent);
+}
+
+.btn-wrong {
+  flex: 1;
+  height: 96rpx;
+  background: var(--grad-danger) !important;
+  color: #ffffff !important;
+  font-size: 28rpx;
+  font-weight: 700;
+  border-radius: var(--radius-xl) !important;
+  border: none !important;
+}
+
+.btn-know::after, .btn-unknown::after,
+.btn-next::after, .btn-next-test::after, .btn-wrong::after {
+  border: none !important;
+}
+
+/* 底部统计 */
+.stats {
+  display: flex;
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 28rpx 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+  border-right: 2rpx solid var(--color-border);
+}
+
+.stat-item:last-child {
+  border-right: none;
+}
+
+.stat-value {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  display: block;
+  line-height: 1;
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  display: block;
+}
+
+/* 测试选项 */
+.test-question {
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+.test-question text {
+  font-size: 28rpx;
+  color: var(--color-text-muted);
+  letter-spacing: 1rpx;
+}
+
+.test-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.option-item {
+  background: rgba(26,39,68,0.04);
+  border: 2rpx solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28rpx 32rpx;
+  font-size: 28rpx;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.option-item.correct {
+  background: rgba(62, 207, 142, 0.12);
+  border-color: var(--color-success);
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.option-item.wrong {
+  background: rgba(255, 92, 92, 0.10);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+/* 测试结果反馈 */
+.test-feedback {
+  border-top: 2rpx solid var(--color-border);
+  padding-top: 32rpx;
+  margin-top: 24rpx;
+  text-align: center;
+}
+
+.feedback-icon {
+  font-size: 64rpx;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.feedback-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.feedback-hint {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  display: block;
+}
+
+/* 完成阶段 */
+.completion {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx;
+}
+
+.completion-content {
+  width: 100%;
+  text-align: center;
+}
+
+.completion-icon {
+  font-size: 120rpx;
+  display: block;
+  margin-bottom: 24rpx;
+}
+
+.completion-title {
+  font-size: 52rpx;
+  font-weight: 900;
+  color: var(--color-text-primary);
+  display: block;
+  margin-bottom: 40rpx;
+  letter-spacing: 2rpx;
+}
+
+.completion-stats {
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  padding: 40rpx;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 48rpx;
+}
+
+.completion-stat {
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.completion-stat:last-child {
+  border-bottom: none;
+}
+
+.completion-stat .stat-value {
+  font-size: 48rpx;
+  color: var(--color-accent);
+}
+
+.completion-stat .stat-label {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.completion-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.btn-again {
+  width: 100%;
+  height: 100rpx;
+  background: var(--grad-accent) !important;
+  color: #1a2744 !important;
+  font-size: 34rpx;
+  font-weight: 800;
+  border-radius: var(--radius-xl) !important;
+  border: none !important;
+  box-shadow: var(--shadow-accent);
+}
+
+.btn-home {
+  width: 100%;
+  height: 88rpx;
+  background: transparent !important;
+  color: var(--color-text-secondary) !important;
+  font-size: 30rpx;
+  border: 2rpx solid var(--color-border) !important;
+  border-radius: var(--radius-xl) !important;
+}
+
+.btn-again::after, .btn-home::after {
+  border: none !important;
+}
+
+/* 加载状态 */
+.loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+}
+
+.loading text {
+  font-size: 28rpx;
+  color: var(--color-text-muted);
+}
+
+.loading-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

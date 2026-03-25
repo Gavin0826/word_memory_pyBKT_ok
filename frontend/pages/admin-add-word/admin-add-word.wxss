@@ -1,0 +1,15 @@
+/* pages/admin-add-word/admin-add-word.wxss */
+.container { min-height: 100vh; background: #f4f5f7; padding-bottom: 60rpx; }
+.header { background: linear-gradient(135deg, #FF6B35, #FF8C42); padding: 80rpx 30rpx 30rpx; display: flex; align-items: center; justify-content: space-between; }
+.header-back text { font-size: 30rpx; color: white; }
+.header-title { font-size: 36rpx; font-weight: bold; color: white; flex: 1; text-align: center; }
+.form-card { background: white; margin: 24rpx; border-radius: 20rpx; padding: 30rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05); }
+.form-item { margin-bottom: 36rpx; }
+.form-label { font-size: 28rpx; color: #555; font-weight: bold; display: block; margin-bottom: 16rpx; }
+.required { color: #F44336; }
+.form-input { border: 2rpx solid #e0e0e0; border-radius: 10rpx; padding: 24rpx; font-size: 30rpx; color: #333; background: #fafafa; width: 100%; box-sizing: border-box; }
+.form-textarea { border: 2rpx solid #e0e0e0; border-radius: 10rpx; padding: 24rpx; font-size: 30rpx; color: #333; background: #fafafa; width: 100%; box-sizing: border-box; height: 160rpx; }
+.radio-group { display: flex; gap: 16rpx; flex-wrap: wrap; }
+.radio-item { padding: 16rpx 32rpx; border-radius: 40rpx; border: 2rpx solid #e0e0e0; font-size: 28rpx; color: #666; }
+.radio-item.active { border-color: #FF6B35; background: #FFF3EE; color: #FF6B35; font-weight: bold; }
+.btn-submit { margin: 0 24rpx; background: linear-gradient(135deg, #FF6B35, #FF8C42); color: white; height: 100rpx; border-radius: 16rpx; font-size: 34rpx; font-weight: bold; }

@@ -1,0 +1,126 @@
+<!-- pages/spelling-test/spelling-test.wxml -->
+<view class="container">
+
+  <!-- 顶部进度 -->
+  <view class="header">
+    <view class="progress-row">
+      <text class="progress-label">SPELLING TEST</text>
+      <text class="progress-count">{{currentIndex + 1}} / {{words.length}}</text>
+    </view>
+    <view class="progress-bar-bg">
+      <view class="progress-bar-fill" style="width: {{words.length > 0 ? ((currentIndex) / words.length * 100) : 0}}%"></view>
+    </view>
+  </view>
+
+  <!-- 测试主体 -->
+  <view class="main" wx:if="{{!finished}}">
+
+    <!-- 单词含义提示 -->
+    <view class="hint-card">
+      <text class="hint-label">释义</text>
+      <text class="hint-meaning">{{currentWord.meaning}}</text>
+      <text class="hint-pron" wx:if="{{currentWord.pronunciation}}">[{{currentWord.pronunciation}}]</text>
+    </view>
+
+    <!-- 拼写区域 -->
+    <view class="spell-card">
+      <text class="spell-instruction">请填写缺失的字母：</text>
+
+      <!-- 单词显示（已知部分 + 下划线） -->
+      <view class="word-display">
+        <text class="word-shown">{{shownPart}}</text>
+        <view class="blank-wrap">
+          <text class="blank-underline">{{blankDisplay}}</text>
+        </view>
+      </view>
+
+      <!-- 输入框 -->
+      <input
+        class="spell-input {{showResult ? (isCorrect ? 'input-correct' : 'input-wrong') : ''}}"
+        placeholder="输入缺失字母"
+        value="{{userInput}}"
+        bindinput="onInput"
+        focus="{{inputFocus}}"
+        disabled="{{showResult}}"
+        maxlength="{{blankLength}}"
+        confirm-type="done"
+        bindconfirm="submitAnswer"
+      />
+
+      <!-- 结果反馈 -->
+      <view class="result-feedback" wx:if="{{showResult}}">
+        <view class="result-row">
+          <text class="result-icon">{{isCorrect ? '✓' : '✗'}}</text>
+          <text class="result-text">{{isCorrect ? '拼写正确！' : '拼写错误'}}</text>
+        </view>
+        <view class="correct-answer" wx:if="{{!isCorrect}}">
+          <text class="ca-label">正确答案：</text>
+          <text class="ca-word">{{currentWord.word}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-area">
+      <button class="btn-submit" wx:if="{{!showResult}}" bindtap="submitAnswer">
+        确认
+      </button>
+      <button class="btn-next" wx:if="{{showResult}}" bindtap="nextWord">
+        {{currentIndex + 1 < words.length ? '下一个 →' : '查看结果'}}
+      </button>
+    </view>
+
+    <!-- 当前单词统计 -->
+    <view class="mini-stats">
+      <view class="mini-stat correct-stat">
+        <text class="mini-val">{{correctCount}}</text>
+        <text class="mini-lbl">正确</text>
+      </view>
+      <view class="mini-stat wrong-stat">
+        <text class="mini-val">{{wrongCount}}</text>
+        <text class="mini-lbl">错误</text>
+      </view>
+      <view class="mini-stat remain-stat">
+        <text class="mini-val">{{words.length - currentIndex - 1}}</text>
+        <text class="mini-lbl">剩余</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 完成页面 -->
+  <view class="finish-view" wx:if="{{finished}}">
+    <text class="finish-icon">{{correctCount === words.length ? '🏆' : correctCount > words.length / 2 ? '🎉' : '💪'}}</text>
+    <text class="finish-title">拼写测试完成！</text>
+    <view class="finish-stats">
+      <view class="finish-stat">
+        <text class="fs-value accent">{{correctCount}}</text>
+        <text class="fs-label">拼写正确</text>
+      </view>
+      <view class="fs-divider"></view>
+      <view class="finish-stat">
+        <text class="fs-value danger">{{wrongCount}}</text>
+        <text class="fs-label">拼写错误</text>
+      </view>
+      <view class="fs-divider"></view>
+      <view class="finish-stat">
+        <text class="fs-value">{{Math.round(correctCount / words.length * 100)}}%</text>
+        <text class="fs-label">正确率</text>
+      </view>
+    </view>
+
+    <!-- 错误单词回顾 -->
+    <view class="wrong-review" wx:if="{{wrongWords.length > 0}}">
+      <text class="wr-title">需要加强记忆：</text>
+      <view class="wr-item" wx:for="{{wrongWords}}" wx:key="id">
+        <text class="wr-word">{{item.word}}</text>
+        <text class="wr-meaning">{{item.meaning}}</text>
+      </view>
+    </view>
+
+    <view class="finish-actions">
+      <button class="btn-retry" wx:if="{{wrongWords.length > 0}}" bindtap="retryWrong">重练错误单词</button>
+      <button class="btn-home" bindtap="goHome">返回首页</button>
+    </view>
+  </view>
+
+</view>

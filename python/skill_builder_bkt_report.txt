@@ -1,0 +1,31 @@
+=== skill_builder_data 预处理报告（pyBKT）===
+输入文件: d:\WordMemory_System\python\skill_builder_data.csv
+输出文件: d:\WordMemory_System\python\skill_builder_bkt_ready.csv
+读取编码: cp1252
+
+原始总行数: 525534
+保留行数: 446844
+删除-缺失skill_name: 78690
+删除-correct非0/1: 0
+删除-order_id非法: 0
+
+用户数(user_id): 4151
+技能数(skill_name): 110
+整体正确率: 69.52%
+
+样本稀疏技能统计:
+  样本数 < 5 的skill数量: 0
+  样本数 < 20 的skill数量: 4
+  样本数 < 50 的skill数量: 9
+
+Top10 技能样本数:
+  Equation Solving Two or Fewer Steps: 24253
+  Percent Of: 22931
+  Addition and Subtraction Integers: 22895
+  Conversion of Fraction Decimals Percents: 20992
+  Volume Rectangular Prism: 19489
+  Venn Diagram: 18275
+  Volume Cylinder: 13734
+  Multiplication and Division Integers: 13159
+  Area Rectangle: 12934
+  Addition and Subtraction Fractions: 11334

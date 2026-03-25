@@ -1,0 +1,135 @@
+<!-- pages/word-stats/word-stats.wxml -->
+<view class="container" wx:if="{{!loading}}">
+
+  <!-- 顶部总览卡片 -->
+  <view class="overview-card">
+    <view class="overview-title">STUDY OVERVIEW</view>
+    <view class="overview-grid">
+      <view class="ov-item">
+        <text class="ov-value">{{totalWords}}</text>
+        <text class="ov-label">学习单词</text>
+      </view>
+      <view class="ov-item">
+        <text class="ov-value">{{masteredWords}}</text>
+        <text class="ov-label">已掌握</text>
+      </view>
+      <view class="ov-item">
+        <text class="ov-value">{{accuracy}}%</text>
+        <text class="ov-label">正确率</text>
+      </view>
+      <view class="ov-item">
+        <text class="ov-value">{{totalHours}}</text>
+        <text class="ov-label">学习时长</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 连续打卡 -->
+  <view class="streak-row">
+    <view class="streak-card streak-total">
+      <text class="streak-num">{{studiedDays}}</text>
+      <text class="streak-label">总学习天数</text>
+    </view>
+    <view class="streak-card streak-consec">
+      <text class="streak-num">{{consecutiveDays}}</text>
+      <text class="streak-label">连续学习天数</text>
+      <text class="streak-fire" wx:if="{{consecutiveDays >= 3}}">🔥</text>
+    </view>
+    <view class="streak-card streak-records">
+      <text class="streak-num">{{totalRecords}}</text>
+      <text class="streak-label">总练习次数</text>
+    </view>
+  </view>
+
+  <!-- 近14天学习柱状图 -->
+  <view class="section-card">
+    <text class="section-title">📅 近14天学习情况</text>
+    <view class="bar-chart">
+      <block wx:for="{{dailyStats}}" wx:key="date">
+        <view class="bar-col">
+          <text class="bar-count" wx:if="{{item.learnedWords > 0}}">{{item.learnedWords}}</text>
+          <view class="bar-wrap">
+            <view
+              class="bar-fill {{item.hasStudy ? 'active' : 'empty'}}"
+              style="height: {{item.barHeight}}%"
+            ></view>
+          </view>
+          <text class="bar-label {{item.dayLabel === '今' ? 'today' : ''}}">{{item.dayLabel}}</text>
+        </view>
+      </block>
+    </view>
+    <view class="chart-legend">
+      <view class="legend-item"><view class="legend-dot active"></view><text>有学习</text></view>
+      <view class="legend-item"><view class="legend-dot empty"></view><text>未学习</text></view>
+    </view>
+  </view>
+
+  <!-- 每日详细数据 -->
+  <view class="section-card">
+    <text class="section-title">📋 每日学习详情</text>
+    <view class="daily-list">
+      <block wx:for="{{dailyStats}}" wx:key="date">
+        <view class="daily-item" wx:if="{{item.hasStudy}}">
+          <view class="daily-left">
+            <text class="daily-date">{{item.date}}</text>
+            <text class="daily-label">{{item.dayLabel}}</text>
+          </view>
+          <view class="daily-right">
+            <view class="daily-stat">
+              <text class="ds-value">{{item.learnedWords}}</text>
+              <text class="ds-label">单词</text>
+            </view>
+            <view class="daily-stat">
+              <text class="ds-value">{{item.totalRecords}}</text>
+              <text class="ds-label">练习</text>
+            </view>
+            <view class="daily-stat">
+              <text class="ds-value acc-text">{{item.accuracy}}%</text>
+              <text class="ds-label">正确率</text>
+            </view>
+          </view>
+        </view>
+      </block>
+      <view class="empty-daily" wx:if="{{studiedDays === 0}}">
+        <text>暂无学习记录，快去学习吧！</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 各词库统计 -->
+  <view class="section-card" wx:if="{{categoryStats.length > 0}}">
+    <text class="section-title">📚 各词库学习情况</text>
+    <view class="cat-list">
+      <block wx:for="{{categoryStats}}" wx:key="category">
+        <view class="cat-item">
+          <view class="cat-header">
+            <text class="cat-name">{{item.category}}</text>
+            <text class="cat-acc">正确率 {{item.accuracy}}%</text>
+          </view>
+          <view class="cat-stats">
+            <view class="cs-item">
+              <text class="cs-value">{{item.learnedWords}}</text>
+              <text class="cs-label">学习单词</text>
+            </view>
+            <view class="cs-item">
+              <text class="cs-value">{{item.totalRecords}}</text>
+              <text class="cs-label">练习次数</text>
+            </view>
+          </view>
+          <view class="cat-progress-wrap">
+            <view class="cat-progress-bar">
+              <view class="cat-progress-fill" style="width: {{item.accuracy}}%"></view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+</view>
+
+<!-- 加载中 -->
+<view class="loading-view" wx:if="{{loading}}">
+  <view class="loading-spinner"></view>
+  <text class="loading-text">加载统计数据...</text>
+</view>

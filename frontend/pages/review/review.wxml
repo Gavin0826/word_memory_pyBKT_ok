@@ -1,0 +1,186 @@
+<!-- pages/review/review.wxml -->
+<view class="container" wx:if="{{userInfo}}">
+
+  <!-- ===== 复习会话界面 ===== -->
+  <view class="session-view" wx:if="{{isReviewing}}">
+
+    <!-- 顶部进度条与退出 -->
+    <view class="session-header">
+      <view class="progress-info">
+        <text class="progress-text">{{currentIndex + 1}} / {{sessionWords.length}}</text>
+        <view class="progress-bar-wrap">
+          <view class="progress-bar-fill" style="width: {{sessionWords.length > 0 ? (currentIndex / sessionWords.length * 100) : 0}}%"></view>
+        </view>
+      </view>
+      <view class="exit-btn" bindtap="exitReview">
+        <text class="exit-icon">✕</text>
+        <text class="exit-text">退出</text>
+      </view>
+    </view>
+
+    <!-- 单词卡片 -->
+    <view class="word-card" wx:if="{{currentWord}}">
+      <view class="word-card-top">
+        <view class="word-stage-badge">{{currentWord.reviewStageText}}</view>
+        <view class="star-btn {{isFavorited ? 'active' : ''}}" bindtap="toggleFavorite">
+          <text class="star-icon">{{isFavorited ? '★' : '☆'}}</text>
+        </view>
+      </view>
+      <text class="word-text">{{currentWord.word}}</text>
+      <text class="word-pron" wx:if="{{currentWord.pronunciation}}">[{{currentWord.pronunciation}}]</text>
+
+      <!-- 忘记后显示释义 -->
+      <view class="forgot-answer" wx:if="{{showAnswer}}">
+        <view class="answer-label">正确释义</view>
+        <text class="answer-meaning">{{currentWord.meaning}}</text>
+        <text class="answer-hint">已加入本组继续练习，下次复习时间已提前</text>
+        <button class="btn-continue" bindtap="continueAfterForgot">继续下一个 →</button>
+      </view>
+    </view>
+
+    <!-- 选项区（未忘记时显示）-->
+    <view class="options-section" wx:if="{{!showAnswer && !showResult}}">
+      <text class="options-title">请选择正确的释义：</text>
+      <view class="options-list">
+        <block wx:for="{{reviewTestOptions}}" wx:key="index">
+          <view
+            class="option-item {{selectedOptionIndex === index ? 'selected' : ''}}"
+            data-index="{{index}}"
+            bindtap="selectOption"
+          >
+            <text class="option-index">{{['A','B','C','D'][index]}}</text>
+            <text class="option-text">{{item}}</text>
+          </view>
+        </block>
+      </view>
+
+      <!-- 操作按钮：提交 + 忘记 -->
+      <view class="action-row">
+        <button
+          class="btn-forgot"
+          bindtap="onForgot"
+        >忘记</button>
+        <button
+          class="btn-submit {{selectedOptionIndex === null ? 'disabled' : ''}}"
+          bindtap="submitAnswer"
+          disabled="{{selectedOptionIndex === null}}"
+        >提交答案</button>
+      </view>
+    </view>
+
+    <!-- 答题结果 -->
+    <view class="result-section" wx:if="{{showResult}}">
+      <view class="result-card {{isCorrect ? 'correct' : 'wrong'}}">
+        <text class="result-icon">{{isCorrect ? '✓' : '✗'}}</text>
+        <text class="result-label">{{isCorrect ? '回答正确！' : '回答错误'}}</text>
+        <text class="result-meaning">{{currentWord.meaning}}</text>
+        <text class="result-hint" wx:if="{{!isCorrect}}">该词已加入本组继续练习</text>
+      </view>
+      <button class="btn-next" bindtap="nextWord">继续 →</button>
+    </view>
+
+  </view>
+
+  <!-- ===== 复习列表界面 ===== -->
+  <view class="list-view" wx:else>
+
+    <!-- 顶部统计卡片 -->
+    <view class="stats-card">
+      <view class="stats-header">
+        <text class="stats-title">复习计划</text>
+        <text class="stats-subtitle">基于艾宾浩斯遗忘曲线</text>
+      </view>
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-value">{{allReviewWords.length}}</text>
+          <text class="stat-label">待复习</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{totalReviewed}}</text>
+          <text class="stat-label">已复习</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{reviewAccuracy}}%</text>
+          <text class="stat-label">正确率</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 开始复习按钮 -->
+    <view class="start-section" wx:if="{{allReviewWords.length > 0}}">
+      <button class="btn-start" bindtap="startReview">
+        🚀 开始复习（本组 {{(app.globalData.studySettings && app.globalData.studySettings.reviewWordsPerSession) || 10}} 个）
+      </button>
+      <text class="start-tip">共 {{allReviewWords.length}} 个单词待复习，每组 {{(app.globalData.studySettings && app.globalData.studySettings.reviewWordsPerSession) || 10}} 个</text>
+    </view>
+
+    <!-- 单词列表 -->
+    <view class="list-section" wx:if="{{allReviewWords.length > 0}}">
+      <view class="list-header" bindtap="toggleList">
+        <text class="list-title">待复习单词（{{allReviewWords.length}}）</text>
+        <text class="list-toggle">{{isListExpanded ? '▲ 收起' : '▼ 展开'}}</text>
+      </view>
+      <view class="list-body" wx:if="{{isListExpanded}}">
+        <block wx:for="{{allReviewWords}}" wx:key="id">
+          <view class="list-item" data-word="{{item}}" bindtap="startSingleWord">
+            <view class="item-left">
+              <text class="item-word">{{item.word}}</text>
+              <text class="item-meaning">{{item.meaning}}</text>
+            </view>
+            <view class="item-right">
+              <text class="item-time" style="color: {{getReviewTimeColor(item.reviewTimeText)}}">{{item.reviewTimeText}}</text>
+              <text class="item-stage">{{item.reviewStageText}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{allReviewWords.length === 0 && !loading}}">
+      <image src="/images/empty-review.png" class="empty-image" mode="widthFix"></image>
+      <text class="empty-title">暂无需要复习的单词 🎉</text>
+      <text class="empty-desc">所有单词都已掌握，快去学新词吧！</text>
+      <button type="primary" bindtap="goToStudy">去学习新单词</button>
+    </view>
+
+    <!-- 加载中 -->
+    <view class="loading" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+      <text>加载中...</text>
+    </view>
+
+  </view>
+
+  <!-- ===== 本组完成弹窗 ===== -->
+  <view class="session-complete" wx:if="{{showSessionComplete}}">
+    <view class="complete-card">
+      <text class="complete-icon">🎉</text>
+      <text class="complete-title">本组复习完成！</text>
+      <view class="complete-stats">
+        <view class="cstat-item">
+          <text class="cstat-value">{{sessionTotal}}</text>
+          <text class="cstat-label">总答题</text>
+        </view>
+        <view class="cstat-item">
+          <text class="cstat-value correct-color">{{sessionCorrect}}</text>
+          <text class="cstat-label">答对</text>
+        </view>
+        <view class="cstat-item">
+          <text class="cstat-value">{{sessionAccuracy}}%</text>
+          <text class="cstat-label">正确率</text>
+        </view>
+      </view>
+      <button class="btn-close-complete" bindtap="closeSessionComplete">查看剩余单词</button>
+    </view>
+  </view>
+
+</view>
+
+<!-- 未登录提示 -->
+<view class="login-prompt" wx:else>
+  <image src="/images/login-required.png" class="login-image" mode="widthFix"></image>
+  <text class="login-title">需要登录</text>
+  <text class="login-desc">登录后查看复习计划</text>
+  <button type="primary" bindtap="goToLogin">立即登录</button>
+</view>

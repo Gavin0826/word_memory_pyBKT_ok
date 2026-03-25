@@ -1,0 +1,18 @@
+=== pyBKT 训练报告 ===
+输入数据: D:\WordMemory_System\python\skill_builder_bkt_lite.csv
+训练集: D:\WordMemory_System\python\bkt_outputs\train_split.csv
+测试集: D:\WordMemory_System\python\bkt_outputs\test_split.csv
+预测结果: D:\WordMemory_System\python\bkt_outputs\test_predictions.csv
+参数文件: 未保存（当前pyBKT版本不支持或写入失败）
+
+样本总数: 20000
+训练集样本: 15648
+测试集样本: 4352
+参与评估样本: 4352
+技能数: 15
+用户数: 649
+
+Accuracy: 0.8063
+Baseline(全预测正确=1) Accuracy: 0.8180
+AUC: 0.7534
+预测列: correct_predictions

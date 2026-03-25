@@ -1,0 +1,25 @@
+/* pages/admin-user-list/admin-user-list.wxss */
+.container { min-height: 100vh; background: #f4f5f7; padding-bottom: 60rpx; }
+.header { background: linear-gradient(135deg, #FF6B35, #FF8C42); padding: 80rpx 30rpx 30rpx; display: flex; align-items: center; justify-content: space-between; }
+.header-back text { font-size: 30rpx; color: white; }
+.header-title { font-size: 36rpx; font-weight: bold; color: white; flex: 1; text-align: center; }
+.summary-bar { padding: 20rpx 30rpx; }
+.summary-text { font-size: 26rpx; color: #999; }
+.loading-wrap { display: flex; flex-direction: column; align-items: center; padding: 60rpx; gap: 20rpx; }
+.loading-spinner { width: 60rpx; height: 60rpx; border: 6rpx solid #f3f3f3; border-top: 6rpx solid #FF6B35; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.user-list { padding: 0 24rpx; }
+.user-item { background: white; border-radius: 16rpx; padding: 24rpx; margin-bottom: 16rpx; display: flex; align-items: center; gap: 20rpx; box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05); }
+.user-avatar { width: 90rpx; height: 90rpx; background: linear-gradient(135deg, #FF6B35, #FF8C42); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.user-avatar text { font-size: 38rpx; color: white; font-weight: bold; }
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 32rpx; font-weight: bold; color: #222; display: block; margin-bottom: 6rpx; }
+.user-email { font-size: 24rpx; color: #999; display: block; margin-bottom: 6rpx; }
+.user-meta { font-size: 24rpx; color: #4CAF50; display: block; }
+.user-right { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; gap: 4rpx; }
+.user-words { font-size: 36rpx; font-weight: bold; color: #FF6B35; }
+.user-words-lab { font-size: 20rpx; color: #999; }
+.arrow { font-size: 36rpx; color: #ccc; }
+.empty-tip { display: flex; flex-direction: column; align-items: center; padding: 80rpx 0; gap: 20rpx; }
+.empty-icon { font-size: 100rpx; }
+.empty-text { font-size: 28rpx; color: #999; }

@@ -1,0 +1,101 @@
+<!-- pages/login/login.wxml -->
+<view class="container">
+  <view class="logo">
+    <text class="logo-text">单词记忆</text>
+    <text class="logo-sub">科学记忆，高效学习</text>
+  </view>
+
+  <!-- 登录模式切换 -->
+  <view class="mode-tabs">
+    <view
+      class="mode-tab {{loginMode === 'user' ? 'active' : ''}}"
+      bindtap="switchMode"
+      data-mode="user"
+    >
+      <text>用户登录</text>
+    </view>
+    <view
+      class="mode-tab {{loginMode === 'admin' ? 'active' : ''}}"
+      bindtap="switchMode"
+      data-mode="admin"
+    >
+      <text>管理员登录</text>
+    </view>
+  </view>
+
+  <!-- 用户登录表单 -->
+  <view class="form" wx:if="{{loginMode === 'user'}}">
+    <view class="input-group">
+      <input
+        class="input"
+        placeholder="用户名/邮箱"
+        value="{{identifier}}"
+        bindinput="onIdentifierInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <input
+        class="input"
+        placeholder="密码"
+        password
+        value="{{password}}"
+        bindinput="onPasswordInput"
+      />
+    </view>
+
+    <view class="remember-me">
+      <checkbox checked="{{rememberMe}}" bindchange="onRememberChange" />
+      <text>记住我</text>
+    </view>
+
+    <button class="btn-login" type="primary" bindtap="login" loading="{{loading}}">
+      {{loading ? '登录中...' : '登录'}}
+    </button>
+
+    <view class="links">
+      <text class="link" bindtap="goToRegister">注册账号</text>
+      <text class="link-separator">|</text>
+      <text class="link" bindtap="onForgotPassword">忘记密码？</text>
+    </view>
+  </view>
+
+  <!-- 管理员登录表单 -->
+  <view class="form admin-form" wx:if="{{loginMode === 'admin'}}">
+    <view class="admin-badge">
+      <text class="admin-badge-icon">🔐</text>
+      <text class="admin-badge-text">管理员专用入口</text>
+    </view>
+
+    <view class="input-group">
+      <input
+        class="input"
+        placeholder="管理员账号"
+        value="{{adminIdentifier}}"
+        bindinput="onAdminIdentifierInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <input
+        class="input"
+        placeholder="管理员密码"
+        password
+        value="{{adminPassword}}"
+        bindinput="onAdminPasswordInput"
+      />
+    </view>
+
+    <button class="btn-login btn-admin" bindtap="adminLogin" loading="{{adminLoading}}">
+      {{adminLoading ? '验证中...' : '进入管理后台'}}
+    </button>
+
+    <view class="admin-hint">
+      <text>管理员账号由系统固定配置，如有疑问请联系开发者</text>
+    </view>
+  </view>
+
+  <view class="footer">
+    <text>© 2026 单词记忆系统 毕业设计项目</text>
+  </view>
+</view>

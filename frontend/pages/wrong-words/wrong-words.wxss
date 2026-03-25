@@ -1,0 +1,250 @@
+/* ==============================
+   错词本页样式 (Part 1)
+   ============================== */
+
+.container {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-bottom: 60rpx;
+}
+
+.header {
+  background: var(--grad-card);
+  padding: 70rpx 40rpx 40rpx;
+  position: relative; overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -80rpx; right: -60rpx;
+  width: 300rpx; height: 300rpx;
+  border-radius: 50%;
+  background: rgba(255,92,92,0.08);
+}
+
+.header-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 32rpx; position: relative; z-index: 1;
+}
+
+.header-title {
+  font-size: 52rpx; font-weight: 900; color: #ffffff;
+}
+
+.header-close {
+  font-size: 36rpx; color: rgba(255,255,255,0.5);
+  width: 72rpx; height: 72rpx;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%; text-align: center; line-height: 72rpx;
+}
+
+.stats-bar {
+  display: flex; align-items: center;
+  position: relative; z-index: 1;
+}
+
+.stat-item { flex: 1; text-align: center; }
+
+.stat-label {
+  font-size: 22rpx; color: rgba(255,255,255,0.45);
+  display: block; margin-bottom: 8rpx;
+}
+
+.stat-value {
+  font-size: 48rpx; font-weight: 800;
+  color: var(--color-accent); display: block;
+}
+
+.stat-divider {
+  width: 2rpx; height: 60rpx;
+  background: rgba(255,255,255,0.12);
+}
+
+/* 搜索筛选 */
+.search-filter-section {
+  padding: 24rpx 32rpx;
+  background: var(--color-card);
+  border-bottom: 2rpx solid var(--color-border);
+}
+
+.search-box {
+  display: flex; align-items: center;
+  background: var(--color-bg);
+  border-radius: var(--radius-xl);
+  padding: 0 24rpx; height: 80rpx;
+  margin-bottom: 20rpx;
+  border: 2rpx solid var(--color-border);
+}
+
+.search-icon { font-size: 32rpx; margin-right: 16rpx; }
+
+.search-input {
+  flex: 1; font-size: 28rpx;
+  color: var(--color-text-primary); height: 80rpx;
+}
+
+.search-placeholder { color: var(--color-text-muted); }
+
+.search-clear {
+  font-size: 28rpx; color: var(--color-text-muted);
+  padding: 8rpx;
+}
+
+.filter-buttons { display: flex; flex-direction: column; gap: 12rpx; }
+
+.button-group { display: flex; gap: 12rpx; flex-wrap: wrap; }
+
+.filter-btn {
+  height: 60rpx !important; padding: 0 24rpx !important;
+  background: var(--color-bg) !important;
+  color: var(--color-text-secondary) !important;
+  border: 2rpx solid var(--color-border) !important;
+  border-radius: var(--radius-xl) !important;
+  font-size: 24rpx !important; font-weight: 600;
+  line-height: 60rpx !important;
+}
+
+.filter-btn.active {
+  background: var(--color-primary) !important;
+  color: #ffffff !important;
+  border-color: var(--color-primary) !important;
+}
+
+.filter-btn::after { border: none !important; }
+
+/* 单词列表 */
+.wrong-words-list { padding: 24rpx 32rpx 0; }
+
+.list-header { margin-bottom: 16rpx; }
+
+.list-count {
+  font-size: 22rpx; font-weight: 700;
+  color: var(--color-text-muted); letter-spacing: 2rpx;
+}
+
+.word-items { display: flex; flex-direction: column; gap: 16rpx; }
+
+.word-item {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 32rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.word-main { margin-bottom: 20rpx; }
+
+.word-header {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 10rpx;
+}
+
+.word-text {
+  font-size: 44rpx; font-weight: 900;
+  color: var(--color-text-primary);
+}
+
+.difficulty-badge {
+  font-size: 20rpx; font-weight: 700;
+  padding: 6rpx 16rpx;
+  border-radius: var(--radius-sm); color: #fff;
+}
+
+.word-pronunciation {
+  font-size: 26rpx; color: var(--color-accent);
+  font-style: italic; margin-bottom: 8rpx; display: block;
+}
+
+.word-meaning {
+  font-size: 28rpx; color: var(--color-text-secondary);
+  font-weight: 500; line-height: 1.5;
+}
+
+.word-stats {
+  display: flex; gap: 24rpx;
+  padding: 20rpx 0;
+  border-top: 2rpx solid var(--color-border);
+  border-bottom: 2rpx solid var(--color-border);
+  margin-bottom: 16rpx;
+}
+
+.stat-box { flex: 1; }
+
+.stat-box .stat-label {
+  font-size: 20rpx; color: var(--color-text-muted);
+  display: block; margin-bottom: 6rpx;
+}
+
+.stat-number {
+  font-size: 40rpx; font-weight: 800;
+  color: var(--color-danger); display: block;
+}
+
+.stat-time {
+  font-size: 26rpx; font-weight: 600;
+  color: var(--color-text-secondary); display: block;
+}
+
+.word-actions { display: flex; justify-content: flex-end; }
+
+.action-btn {
+  height: 60rpx !important; padding: 0 28rpx !important;
+  border-radius: var(--radius-xl) !important;
+  font-size: 24rpx !important; font-weight: 600;
+}
+
+.delete-btn {
+  background: rgba(255,92,92,0.08) !important;
+  color: var(--color-danger) !important;
+  border: 2rpx solid rgba(255,92,92,0.2) !important;
+}
+
+.delete-btn::after { border: none !important; }
+
+.bottom-actions { margin-top: 32rpx; }
+
+.btn-clear-all {
+  width: 100%; height: 96rpx;
+  background: var(--grad-danger) !important;
+  color: #ffffff !important;
+  font-size: 30rpx; font-weight: 700;
+  border-radius: var(--radius-xl) !important;
+  border: none !important;
+}
+
+.btn-clear-all::after { border: none !important; }
+
+/* 空状态 */
+.empty-state {
+  text-align: center; padding: 100rpx 60rpx;
+}
+
+.empty-icon { font-size: 100rpx; display: block; margin-bottom: 24rpx; }
+
+.empty-title {
+  font-size: 36rpx; font-weight: 700;
+  color: var(--color-text-primary); display: block; margin-bottom: 16rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx; color: var(--color-text-muted);
+  display: block; line-height: 1.6;
+}
+
+/* 加载 */
+.loading {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 80rpx;
+}
+
+.loading text { color: var(--color-text-muted); font-size: 28rpx; margin-top: 20rpx; }
+
+.loading-spinner {
+  width: 64rpx; height: 64rpx;
+  border: 6rpx solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

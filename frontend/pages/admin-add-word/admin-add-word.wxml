@@ -1,0 +1,46 @@
+<!-- pages/admin-add-word/admin-add-word.wxml -->
+<view class="container">
+  <view class="header">
+    <view class="header-back" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">添加单词</text>
+    <view style="width:80rpx"></view>
+  </view>
+
+  <view class="form-card">
+    <view class="form-item">
+      <text class="form-label">单词 <text class="required">*</text></text>
+      <input class="form-input" placeholder="请输入英文单词" value="{{form.word}}" bindinput="onInput" data-field="word" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">音标</text>
+      <input class="form-input" placeholder="例如：/ˈæpl/" value="{{form.pronunciation}}" bindinput="onInput" data-field="pronunciation" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">中文释义 <text class="required">*</text></text>
+      <textarea class="form-textarea" placeholder="请输入中文释义，例如：n. 苹果" value="{{form.meaning}}" bindinput="onInput" data-field="meaning" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">词库 <text class="required">*</text></text>
+      <view class="radio-group">
+        <view class="radio-item {{form.category === 'CET-4' ? 'active' : ''}}" bindtap="setCategory" data-val="CET-4"><text>CET-4</text></view>
+        <view class="radio-item {{form.category === 'CET-6' ? 'active' : ''}}" bindtap="setCategory" data-val="CET-6"><text>CET-6</text></view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">难度</text>
+      <view class="radio-group">
+        <view class="radio-item {{form.difficulty === 'easy' ? 'active' : ''}}" bindtap="setDifficulty" data-val="easy"><text>简单</text></view>
+        <view class="radio-item {{form.difficulty === 'medium' ? 'active' : ''}}" bindtap="setDifficulty" data-val="medium"><text>中等</text></view>
+        <view class="radio-item {{form.difficulty === 'hard' ? 'active' : ''}}" bindtap="setDifficulty" data-val="hard"><text>困难</text></view>
+      </view>
+    </view>
+  </view>
+
+  <button class="btn-submit" loading="{{loading}}" bindtap="submitWord">
+    {{loading ? '提交中...' : '添加单词'}}
+  </button>
+</view>

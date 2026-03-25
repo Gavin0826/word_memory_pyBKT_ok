@@ -1,0 +1,72 @@
+<!-- pages/admin-edit-word/admin-edit-word.wxml -->
+<view class="container">
+  <view class="header">
+    <view class="header-back" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">{{categoryName}} 单词列表</text>
+    <view class="header-action" bindtap="goToAddWord"><text>+ 添加</text></view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索单词或释义" value="{{keyword}}" bindinput="onSearch" />
+  </view>
+
+  <!-- 统计 -->
+  <view class="list-meta">
+    <text>共 {{total}} 个单词，第 {{page}}/{{totalPages}} 页</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 单词列表 -->
+  <view class="word-list" wx:if="{{!loading}}">
+    <view class="word-item" wx:for="{{words}}" wx:key="id">
+      <view class="word-main">
+        <text class="word-text">{{item.word}}</text>
+        <text class="word-pron">{{item.pronunciation}}</text>
+        <text class="word-tag {{item.difficulty}}">{{item.difficulty}}</text>
+      </view>
+      <text class="word-meaning">{{item.meaning}}</text>
+      <view class="word-actions">
+        <view class="action-btn edit-btn" bindtap="editWord" data-word="{{item}}"><text>编辑</text></view>
+        <view class="action-btn delete-btn" bindtap="deleteWord" data-id="{{item.id}}" data-word="{{item.word}}"><text>删除</text></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-tip" wx:if="{{!loading && words.length === 0}}">
+    <text class="empty-icon">🔍</text>
+    <text class="empty-text">暂无单词</text>
+  </view>
+
+  <!-- 翻页 -->
+  <view class="pagination" wx:if="{{totalPages > 1}}">
+    <view class="page-btn {{page <= 1 ? 'disabled' : ''}}" bindtap="prevPage"><text>上一页</text></view>
+    <text class="page-info">{{page}} / {{totalPages}}</text>
+    <view class="page-btn {{page >= totalPages ? 'disabled' : ''}}" bindtap="nextPage"><text>下一页</text></view>
+  </view>
+
+  <!-- 编辑弹窗 -->
+  <view class="modal-mask" wx:if="{{showEditModal}}" bindtap="closeModal"></view>
+  <view class="modal" wx:if="{{showEditModal}}">
+    <text class="modal-title">编辑单词</text>
+    <view class="modal-form">
+      <input class="modal-input" placeholder="单词" value="{{editForm.word}}" bindinput="onEditInput" data-field="word" />
+      <input class="modal-input" placeholder="音标" value="{{editForm.pronunciation}}" bindinput="onEditInput" data-field="pronunciation" />
+      <textarea class="modal-textarea" placeholder="中文释义" value="{{editForm.meaning}}" bindinput="onEditInput" data-field="meaning" />
+      <view class="radio-group">
+        <view class="radio-item {{editForm.difficulty === 'easy' ? 'active' : ''}}" bindtap="setEditDifficulty" data-val="easy"><text>简单</text></view>
+        <view class="radio-item {{editForm.difficulty === 'medium' ? 'active' : ''}}" bindtap="setEditDifficulty" data-val="medium"><text>中等</text></view>
+        <view class="radio-item {{editForm.difficulty === 'hard' ? 'active' : ''}}" bindtap="setEditDifficulty" data-val="hard"><text>困难</text></view>
+      </view>
+    </view>
+    <view class="modal-btns">
+      <view class="modal-btn cancel" bindtap="closeModal"><text>取消</text></view>
+      <view class="modal-btn confirm" bindtap="saveEdit"><text>保存</text></view>
+    </view>
+  </view>
+</view>

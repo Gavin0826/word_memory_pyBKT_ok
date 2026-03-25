@@ -1,0 +1,63 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/register/register",
+    "pages/home/home",
+    "pages/study/study",
+    "pages/wordlearning/wordlearning",
+    "pages/review/review",
+    "pages/mine/mine",
+    "pages/wrong-words/wrong-words",
+    "pages/admin/admin",
+    "pages/admin-wordlist/admin-wordlist",
+    "pages/admin-add-word/admin-add-word",
+    "pages/admin-edit-word/admin-edit-word",
+    "pages/admin-user-list/admin-user-list",
+    "pages/admin-user-stats/admin-user-stats",
+    "pages/study-settings/study-settings",
+    "pages/word-stats/word-stats",
+    "pages/favorites/favorites",
+    "pages/spelling-test/spelling-test"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#4CAF50",
+    "navigationBarTitleText": "单词记忆系统",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f8f9fa"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#4CAF50",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/study/study",
+        "text": "学习",
+        "iconPath": "images/study.png",
+        "selectedIconPath": "images/study-active.png"
+      },
+      {
+        "pagePath": "pages/review/review",
+        "text": "复习",
+        "iconPath": "images/review.png",
+        "selectedIconPath": "images/review-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "images/mine.png",
+        "selectedIconPath": "images/mine-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -1,0 +1,419 @@
+/* ==============================
+   学习统计页样式 - 完整匹配 wxml
+   ============================== */
+
+.container {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-bottom: 60rpx;
+}
+
+/* ========== 顶部总览卡片 ========== */
+.overview-card {
+  background: var(--grad-card);
+  padding: 72rpx 40rpx 48rpx;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24rpx;
+}
+
+.overview-card::before {
+  content: '';
+  position: absolute;
+  top: -80rpx; right: -60rpx;
+  width: 340rpx; height: 340rpx;
+  border-radius: 50%;
+  background: rgba(245,166,35,0.08);
+}
+
+.overview-card::after {
+  content: '';
+  position: absolute;
+  bottom: -60rpx; left: -40rpx;
+  width: 200rpx; height: 200rpx;
+  border-radius: 50%;
+  background: rgba(62,207,142,0.05);
+}
+
+.overview-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 4rpx;
+  text-transform: uppercase;
+  margin-bottom: 40rpx;
+  position: relative; z-index: 1;
+}
+
+.overview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative; z-index: 1;
+}
+
+.ov-item {
+  width: 50%;
+  text-align: center;
+  padding: 24rpx 0;
+  border-right: 2rpx solid rgba(255,255,255,0.1);
+  border-bottom: 2rpx solid rgba(255,255,255,0.1);
+  box-sizing: border-box;
+}
+
+.ov-item:nth-child(2n) { border-right: none; }
+.ov-item:nth-child(n+3) { border-bottom: none; }
+
+.ov-value {
+  font-size: 56rpx;
+  font-weight: 900;
+  color: var(--color-accent);
+  display: block;
+  line-height: 1;
+  margin-bottom: 12rpx;
+}
+
+.ov-label {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.45);
+  display: block;
+  letter-spacing: 1rpx;
+}
+
+/* ========== 连续打卡行 ========== */
+.streak-row {
+  display: flex;
+  gap: 16rpx;
+  padding: 0 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.streak-card {
+  flex: 1;
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 28rpx 16rpx;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.streak-total { border-top: 6rpx solid var(--color-accent); }
+.streak-consec { border-top: 6rpx solid #f7c05a; }
+.streak-records { border-top: 6rpx solid var(--color-success); }
+
+.streak-num {
+  font-size: 56rpx;
+  font-weight: 900;
+  color: var(--color-text-primary);
+  display: block;
+  line-height: 1;
+  margin-bottom: 10rpx;
+}
+
+.streak-total .streak-num { color: var(--color-accent); }
+.streak-consec .streak-num { color: #e08c0a; }
+.streak-records .streak-num { color: var(--color-success); }
+
+.streak-label {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+  display: block;
+  line-height: 1.4;
+}
+
+.streak-fire {
+  position: absolute;
+  top: 10rpx; right: 14rpx;
+  font-size: 32rpx;
+}
+
+/* ========== 通用 Section 卡片 ========== */
+.section-card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 36rpx;
+  box-shadow: var(--shadow-sm);
+  margin: 0 24rpx 24rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  display: block;
+  margin-bottom: 32rpx;
+  letter-spacing: 1rpx;
+}
+
+/* ========== 柱状图 ========== */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6rpx;
+  height: 200rpx;
+  padding-bottom: 40rpx;
+  position: relative;
+}
+
+/* 每一列（柱子 + 数字 + 标签） */
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+}
+
+/* 柱子顶部数字 */
+.bar-count {
+  font-size: 18rpx;
+  font-weight: 700;
+  color: var(--color-accent);
+  display: block;
+  margin-bottom: 4rpx;
+  line-height: 1;
+}
+
+/* 柱子容器（撑满剩余高度） */
+.bar-wrap {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* 实际柱子 */
+.bar-fill {
+  width: 100%;
+  border-radius: 6rpx 6rpx 0 0;
+  min-height: 6rpx;
+  transition: height 0.4s ease;
+}
+
+.bar-fill.active {
+  background: var(--grad-primary);
+}
+
+.bar-fill.empty {
+  background: var(--color-border);
+  min-height: 6rpx;
+  height: 6rpx !important;
+}
+
+/* 今日柱子高亮金色 */
+.bar-label.today + .bar-wrap .bar-fill.active,
+.bar-col:last-child .bar-fill.active {
+  background: var(--grad-accent);
+}
+
+/* 日期标签 */
+.bar-label {
+  font-size: 18rpx;
+  color: var(--color-text-muted);
+  margin-top: 8rpx;
+  white-space: nowrap;
+  display: block;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+}
+
+.bar-label.today {
+  color: var(--color-accent);
+  font-weight: 800;
+}
+
+/* 图例 */
+.chart-legend {
+  display: flex;
+  gap: 24rpx;
+  justify-content: flex-end;
+  margin-top: 16rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.legend-item text {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+.legend-dot {
+  width: 20rpx; height: 20rpx;
+  border-radius: 4rpx;
+}
+
+.legend-dot.active { background: var(--color-primary); }
+.legend-dot.empty { background: var(--color-border); }
+
+/* ========== 每日详细数据 ========== */
+.daily-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.daily-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 2rpx solid var(--color-border);
+}
+
+.daily-item:last-child { border-bottom: none; }
+
+.daily-left { flex-shrink: 0; margin-right: 16rpx; }
+
+.daily-date {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.daily-label {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  display: block;
+}
+
+.daily-right {
+  display: flex;
+  gap: 20rpx;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.daily-stat { text-align: center; }
+
+.ds-value {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  display: block;
+  line-height: 1;
+  margin-bottom: 4rpx;
+}
+
+.ds-value.acc-text { color: var(--color-success); }
+
+.ds-label {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+  display: block;
+}
+
+.empty-daily {
+  text-align: center;
+  padding: 60rpx 0;
+}
+
+.empty-daily text {
+  font-size: 28rpx;
+  color: var(--color-text-muted);
+}
+
+/* ========== 词库统计 ========== */
+.cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+
+.cat-item {}
+
+.cat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.cat-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.cat-acc {
+  font-size: 26rpx;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+.cat-stats {
+  display: flex;
+  gap: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.cs-item { }
+
+.cs-value {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  display: block;
+  line-height: 1;
+  margin-bottom: 4rpx;
+}
+
+.cs-label {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+  display: block;
+}
+
+.cat-progress-wrap {
+  width: 100%;
+}
+
+.cat-progress-bar {
+  height: 12rpx;
+  background: var(--color-border);
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.cat-progress-fill {
+  height: 100%;
+  background: var(--grad-accent);
+  border-radius: 12rpx;
+  transition: width 0.5s ease;
+  min-width: 6rpx;
+}
+
+/* ========== 加载状态 ========== */
+.loading-view {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+}
+
+.loading-spinner {
+  width: 80rpx; height: 80rpx;
+  border: 6rpx solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 24rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: var(--color-text-muted);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

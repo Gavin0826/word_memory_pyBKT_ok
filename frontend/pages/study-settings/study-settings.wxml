@@ -1,0 +1,95 @@
+<!-- pages/study-settings/study-settings.wxml -->
+<view class="container">
+
+  <!-- 标题卡片 -->
+  <view class="header-card">
+    <text class="header-icon">⚙️</text>
+    <text class="header-title">学习设置</text>
+    <text class="header-desc">自定义你的学习节奏，让记忆更高效</text>
+  </view>
+
+  <!-- 新词设置 -->
+  <view class="setting-card">
+    <view class="setting-header">
+      <view class="setting-label-row">
+        <text class="setting-icon">📖</text>
+        <text class="setting-title">单次学习新词数量</text>
+      </view>
+      <view class="setting-value-badge">
+        <text class="setting-value">{{sliderNewWords}}</text>
+        <text class="setting-unit">个</text>
+      </view>
+    </view>
+    <view class="slider-wrap">
+      <text class="slider-min">5</text>
+      <slider
+        class="slider"
+        min="5"
+        max="50"
+        step="5"
+        value="{{sliderNewWords}}"
+        activeColor="#4CAF50"
+        backgroundColor="#e0e0e0"
+        block-color="#4CAF50"
+        block-size="26"
+        bindchange="onNewWordsChange"
+      />
+      <text class="slider-max">50</text>
+    </view>
+    <view class="setting-tips">
+      <text class="tip-item" wx:if="{{sliderNewWords <= 10}}">🌱 适合初学者，轻松入门</text>
+      <text class="tip-item" wx:elif="{{sliderNewWords <= 25}}">🔥 适合有基础的学习者</text>
+      <text class="tip-item" wx:else>💪 挑战模式，适合备考冲刺</text>
+    </view>
+  </view>
+
+  <!-- 复习词设置 -->
+  <view class="setting-card">
+    <view class="setting-header">
+      <view class="setting-label-row">
+        <text class="setting-icon">🔄</text>
+        <text class="setting-title">单次复习词汇数量</text>
+      </view>
+      <view class="setting-value-badge">
+        <text class="setting-value">{{sliderReviewWords}}</text>
+        <text class="setting-unit">个</text>
+      </view>
+    </view>
+    <view class="slider-wrap">
+      <text class="slider-min">5</text>
+      <slider
+        class="slider"
+        min="5"
+        max="50"
+        step="5"
+        value="{{sliderReviewWords}}"
+        activeColor="#2196F3"
+        backgroundColor="#e0e0e0"
+        block-color="#2196F3"
+        block-size="26"
+        bindchange="onReviewWordsChange"
+      />
+      <text class="slider-max">50</text>
+    </view>
+    <view class="setting-tips">
+      <text class="tip-item" wx:if="{{sliderReviewWords <= 10}}">🌱 每次少量复习，轻松不疲惫</text>
+      <text class="tip-item" wx:elif="{{sliderReviewWords <= 25}}">🔥 适中的复习量，效果均衡</text>
+      <text class="tip-item" wx:else>💪 大量强化复习，适合冲刺</text>
+    </view>
+  </view>
+
+  <!-- 说明卡片 -->
+  <view class="info-card">
+    <text class="info-title">💡 设置说明</text>
+    <text class="info-item">• 新词数量：每次进入词库学习时，系统从该词库中取出的新单词数</text>
+    <text class="info-item">• 复习数量：点击"开始复习"后，每组复习的单词数量</text>
+    <text class="info-item">• 设置修改后立即生效，下次学习即可体验新设置</text>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="actions">
+    <button class="btn-save" bindtap="saveSettings">保存设置</button>
+    <button class="btn-reset" bindtap="resetSettings">恢复默认</button>
+  </view>
+
+</view>

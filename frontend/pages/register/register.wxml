@@ -1,0 +1,65 @@
+<view class="container">
+  <view class="header">
+    <text class="title">注册新账号</text>
+    <text class="subtitle">创建账号开始学习之旅</text>
+  </view>
+  
+  <view class="form">
+    <view class="input-group">
+      <input 
+        class="input" 
+        placeholder="请输入用户名" 
+        value="{{username}}" 
+        bindinput="onUsernameInput"
+      />
+      <text class="hint">4-20个字符，支持字母、数字、下划线</text>
+    </view>
+    
+    <view class="input-group">
+      <input 
+        class="input" 
+        placeholder="请输入邮箱（可选）" 
+        value="{{email}}" 
+        bindinput="onEmailInput"
+      />
+      <text class="hint">用于找回密码和接收通知</text>
+    </view>
+    
+    <view class="input-group">
+      <input 
+        class="input" 
+        placeholder="请输入密码" 
+        password 
+        value="{{password}}" 
+        bindinput="onPasswordInput"
+      />
+      <text class="hint">至少6位字符</text>
+    </view>
+    
+    <view class="input-group">
+      <input 
+        class="input" 
+        placeholder="请再次输入密码" 
+        password 
+        value="{{confirmPassword}}" 
+        bindinput="onConfirmPasswordInput"
+      />
+    </view>
+    
+    <view class="strength" wx:if="{{password}}">
+      <text>密码强度：{{strengthText}}</text>
+      <view class="strength-bar">
+        <view class="strength-level {{strengthClass}}"></view>
+      </view>
+    </view>
+    
+    <button class="btn-register" type="primary" bindtap="register" loading="{{loading}}">
+      {{loading ? '注册中...' : '注册'}}
+    </button>
+    
+    <view class="links">
+      <text>已有账号？</text>
+      <text class="link" bindtap="goToLogin">立即登录</text>
+    </view>
+  </view>
+</view>

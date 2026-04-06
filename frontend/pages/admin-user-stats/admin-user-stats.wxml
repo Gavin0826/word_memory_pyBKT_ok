@@ -25,11 +25,11 @@
     <!-- 统计数据 -->
     <view class="stats-grid">
       <view class="stat-item">
-        <text class="stat-val orange">{{userInfo.totalWords || 0}}</text>
+        <text class="stat-val orange">{{totalWords || 0}}</text>
         <text class="stat-lab">累计掌握</text>
       </view>
       <view class="stat-item">
-        <text class="stat-val green">{{userInfo.studiedDays || 0}}</text>
+        <text class="stat-val green">{{studiedDays || 0}}</text>
         <text class="stat-lab">学习天数</text>
       </view>
       <view class="stat-item">

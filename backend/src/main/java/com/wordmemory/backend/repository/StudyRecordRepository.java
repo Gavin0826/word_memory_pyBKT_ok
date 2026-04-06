@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
+
 @Repository
 public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> {
     // 查找用户需要复习的单词
@@ -25,4 +27,8 @@ public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> 
 
     // 获取用户-单词的最新一条学习记录（用于 SM-2 调度状态）
     StudyRecord findTopByUserIdAndWordIdOrderByStudyTimeDesc(Long userId, Long wordId);
+
+    // BKT 在线推断：获取用户-单词的历史答题序列（按时间升序）
+    @Query("SELECT r.isCorrect FROM StudyRecord r WHERE r.user.id = :userId AND r.word.id = :wordId ORDER BY r.studyTime ASC")
+    List<Boolean> findIsCorrectByUserIdAndWordIdOrderByStudyTimeAsc(Long userId, Long wordId);
 }

@@ -27,7 +27,8 @@ Page({
     testedCount: 0,
     loading: false,
     isFavorited: false,
-    favoriteWordIds: []
+    favoriteWordIds: [],
+    soundType: 2  // 1=英音 2=美音
   },
 
   onLoad: function(options) {
@@ -121,6 +122,7 @@ Page({
             progress: shuffledWords.length > 0 ? 1 : 0,
             isFavorited: isFav
           });
+          if (firstWord) setTimeout(() => that.playSound(), 400);
           if (shuffledWords.length === 0) that.showCompletion();
         } else {
           wx.showToast({ title: res.data.message || '加载失败', icon: 'none' });
@@ -183,6 +185,7 @@ Page({
         isKnown: false,
         isFavorited: isFav
       });
+      setTimeout(() => this.playSound(), 300);
       this.updateProgress();
     } else {
       this.startTestStage();
@@ -300,13 +303,6 @@ Page({
     const userInfo = app.globalData.userInfo;
     if (!userInfo) return;
 
-    const currentWord = this.data.currentWord && this.data.currentWord.id === wordId
-      ? this.data.currentWord
-      : (this.data.allWords || []).find(w => w.id === wordId) || null;
-
-    const isCorrect = actionType === 'know' || actionType === 'test_correct';
-    const bktProbability = this.getMockBktProbability(currentWord, isCorrect);
-
     wx.request({
       url: app.globalData.apiBaseUrl + '/api/study/record-custom',
       method: 'POST',
@@ -317,21 +313,11 @@ Page({
       data: {
         userId: userInfo.id,
         wordId: wordId,
-        actionType: actionType,
-        bktProbability: bktProbability
+        actionType: actionType
       },
       success: function(res) { console.log('record:', actionType, res.data.status); },
       fail: function(err) { console.error('record fail:', err); }
     });
-  },
-
-  getMockBktProbability: function(word, isCorrect) {
-    const difficulty = (word && word.difficulty) ? word.difficulty : 'medium';
-    const baseMap = { easy: 0.85, medium: 0.70, hard: 0.55 };
-    let p = baseMap[difficulty] || 0.70;
-    if (isCorrect === true) p = Math.min(p + 0.10, 0.95);
-    if (isCorrect === false) p = Math.max(p - 0.25, 0.10);
-    return Number(p.toFixed(2));
   },
 
   updateProgress: function() {
@@ -375,5 +361,37 @@ Page({
       var tmp = array[i]; array[i] = array[j]; array[j] = tmp;
     }
     return array;
+  },
+
+  playSound: function() {
+    const word = this.data.currentWord && this.data.currentWord.word;
+    if (!word) return;
+    if (!this._audioCtx) {
+      this._audioCtx = wx.createInnerAudioContext();
+      this._audioCtx.onError(() => {
+        wx.showToast({ title: '发音加载失败', icon: 'none', duration: 1200 });
+      });
+    }
+    this._audioCtx.stop();
+    this._audioCtx.src = 'http://dict.youdao.com/dictvoice?audio='
+      + encodeURIComponent(word) + '&type=' + (this.data.soundType || 2);
+    this._audioCtx.play();
+  },
+
+  toggleSoundType: function() {
+    const newType = this.data.soundType === 2 ? 1 : 2;
+    this.setData({ soundType: newType });
+    wx.showToast({
+      title: newType === 1 ? '已切换为英音' : '已切换为美音',
+      icon: 'none', duration: 800
+    });
+    this.playSound();
+  },
+
+  onUnload: function() {
+    if (this._audioCtx) {
+      this._audioCtx.destroy();
+      this._audioCtx = null;
+    }
   }
 });

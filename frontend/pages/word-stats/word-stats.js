@@ -19,7 +19,11 @@ Page({
     // 每日统计
     dailyStats: [],
     // 柱状图最大值（用于计算柱子高度比例）
-    dailyMaxWords: 1
+    dailyMaxWords: 1,
+    // 掌握概率列表
+    masteryList: [],
+    averageMastery: 0,
+    showMastery: false
   },
 
   onLoad: function() {
@@ -29,6 +33,7 @@ Page({
       return;
     }
     this.loadStats(userInfo.id);
+    this.loadMastery(userInfo.id);
   },
 
   loadStats: function(userId) {
@@ -46,7 +51,6 @@ Page({
             ? Math.floor(totalMinutes / 60) + '小时' + (totalMinutes % 60 > 0 ? totalMinutes % 60 + '分' : '')
             : totalMinutes + '分钟';
 
-          // 计算每日柱状图最大值
           const dailyStats = (d.dailyStats || []).map(day => ({
             ...day,
             learnedWords: day.learnedWords || 0,
@@ -56,7 +60,6 @@ Page({
           }));
           const dailyMaxWords = Math.max(1, ...dailyStats.map(d => d.learnedWords));
 
-          // 为每天计算柱子高度百分比（最大100%，最小0%）
           const dailyWithHeight = dailyStats.map(day => ({
             ...day,
             barHeight: dailyMaxWords > 0
@@ -88,10 +91,28 @@ Page({
     });
   },
 
+  loadMastery: function(userId) {
+    wx.request({
+      url: app.globalData.apiBaseUrl + '/api/study/' + userId + '/mastery',
+      method: 'GET',
+      header: { 'Authorization': 'Bearer ' + app.globalData.sessionToken },
+      success: (res) => {
+        if (res.data && res.data.status === 'success') {
+          this.setData({
+            masteryList: res.data.masteryList || [],
+            averageMastery: Math.round((res.data.averageMastery || 0) * 100),
+            showMastery: (res.data.masteryList || []).length > 0
+          });
+        }
+      }
+    });
+  },
+
   onPullDownRefresh: function() {
     const userInfo = app.globalData.userInfo;
     if (userInfo) {
       this.loadStats(userInfo.id);
+      this.loadMastery(userInfo.id);
     }
     wx.stopPullDownRefresh();
   }

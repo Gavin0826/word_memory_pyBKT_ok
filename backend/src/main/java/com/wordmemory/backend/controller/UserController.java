@@ -1,15 +1,19 @@
 package com.wordmemory.backend.controller;
 
+import com.wordmemory.backend.entity.StudyRecord;
 import com.wordmemory.backend.entity.User;
 import com.wordmemory.backend.entity.UserSession;
+import com.wordmemory.backend.repository.StudyRecordRepository;
 import com.wordmemory.backend.repository.UserRepository;
 import com.wordmemory.backend.repository.UserSessionRepository;
 import com.wordmemory.backend.util.PasswordUtil;
+import com.wordmemory.backend.util.StudyStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -20,6 +24,12 @@ public class UserController {
 
     @Autowired
     private UserSessionRepository sessionRepository;
+
+    @Autowired
+    private StudyRecordRepository studyRecordRepository;
+
+    @Autowired
+    private StudyStatsService studyStatsService;
 
     // 会话过期时间（30天）
     private static final int SESSION_EXPIRE_DAYS = 30;
@@ -525,12 +535,13 @@ public class UserController {
             List<User> users = userRepository.findAll();
             List<Map<String, Object>> userList = new ArrayList<>();
             for (User user : users) {
+                Map<String, Object> stats = studyStatsService.buildUserStats(user.getId());
                 Map<String, Object> userInfo = new HashMap<>();
                 userInfo.put("id", user.getId());
                 userInfo.put("username", user.getUsername());
                 userInfo.put("email", user.getEmail());
-                userInfo.put("totalWords", user.getTotalWords());
-                userInfo.put("studiedDays", user.getStudiedDays());
+                userInfo.put("totalWords", stats.get("masteredWords"));
+                userInfo.put("studiedDays", stats.get("studiedDays"));
                 userInfo.put("lastLogin", user.getLastLogin());
                 userInfo.put("createdAt", user.getCreatedAt());
                 userList.add(userInfo);
@@ -559,12 +570,14 @@ public class UserController {
                 return response;
             }
             User user = userOpt.get();
+            Map<String, Object> stats = studyStatsService.buildUserStats(userId);
+
             Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("id", user.getId());
             userInfo.put("username", user.getUsername());
             userInfo.put("email", user.getEmail());
-            userInfo.put("totalWords", user.getTotalWords());
-            userInfo.put("studiedDays", user.getStudiedDays());
+            userInfo.put("totalWords", stats.get("masteredWords"));
+            userInfo.put("studiedDays", stats.get("studiedDays"));
             userInfo.put("lastLogin", user.getLastLogin());
             userInfo.put("createdAt", user.getCreatedAt());
             response.put("status", "success");

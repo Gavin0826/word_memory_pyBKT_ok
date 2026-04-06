@@ -3,10 +3,14 @@ package com.wordmemory.backend.controller;
 import com.wordmemory.backend.entity.StudyRecord;
 import com.wordmemory.backend.entity.User;
 import com.wordmemory.backend.entity.Word;
+import com.wordmemory.backend.entity.WordMastery;
 import com.wordmemory.backend.repository.StudyRecordRepository;
 import com.wordmemory.backend.repository.UserRepository;
+import com.wordmemory.backend.repository.WordMasteryRepository;
 import com.wordmemory.backend.repository.WordRepository;
+import com.wordmemory.backend.util.BktInferenceService;
 import com.wordmemory.backend.util.Sm2Scheduler;
+import com.wordmemory.backend.util.StudyStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +29,12 @@ public class StudyController {
     private UserRepository userRepository;
     @Autowired
     private WordRepository wordRepository;
+    @Autowired
+    private WordMasteryRepository wordMasteryRepository;
+    @Autowired
+    private BktInferenceService bktInferenceService;
+    @Autowired
+    private StudyStatsService studyStatsService;
 
     /**
      * 将 pyBKT 概率映射为 SM-2 质量分 q：
@@ -38,35 +48,51 @@ public class StudyController {
     }
 
     /**
-     * 兼容接入：优先使用请求中的 bktProbability/masteryProbability 映射 q；
-     * 若未提供或非法，则回退到原逻辑（正确=5，错误=2）。
+     * 基于后端在线 BKT 推断结果映射 SM-2 质量分 q。
      *
      * 一致性约束：
      * - isCorrect=true 时，q 最低为 3（避免“答对却按失败重置”）
      * - isCorrect=false 时，q 最高为 2（避免“答错却给高分”）
      */
-    private int resolveSm2Quality(Boolean isCorrect, Map<String, Object> request) {
-        Object raw = request.get("bktProbability");
-        if (raw == null) raw = request.get("masteryProbability");
-
+    private int resolveSm2Quality(Boolean isCorrect, Long userId, Long wordId, String difficulty) {
         int fallbackQ = Boolean.TRUE.equals(isCorrect) ? 5 : 2;
-
+        Object raw = null;
+        if (userId != null && wordId != null) {
+            try {
+                raw = bktInferenceService.inferMastery(userId, wordId, difficulty);
+            } catch (Exception ignored) { }
+        }
+        if (raw == null && userId != null && wordId != null) {
+            try {
+                Optional<WordMastery> wm = wordMasteryRepository.findByUserIdAndWordId(userId, wordId);
+                if (wm.isPresent()) raw = wm.get().getMasteryProbability();
+            } catch (Exception ignored) { }
+        }
         if (raw != null) {
             try {
                 double p = Double.parseDouble(raw.toString());
                 p = Math.max(0.0, Math.min(1.0, p));
                 int mappedQ = mapBktProbabilityToQ(p);
-
-                if (Boolean.TRUE.equals(isCorrect)) {
-                    return Math.max(mappedQ, 3);
-                }
+                if (Boolean.TRUE.equals(isCorrect)) return Math.max(mappedQ, 3);
                 return Math.min(mappedQ, 2);
-            } catch (Exception ignored) {
-                // ignore and fallback
-            }
+            } catch (Exception ignored) { }
         }
-
         return fallbackQ;
+    }
+
+    private void updateWordMastery(Long userId, Long wordId, String difficulty) {
+        try {
+            double p;
+            try {
+                p = bktInferenceService.inferMastery(userId, wordId, difficulty);
+            } catch (Exception e) {
+                p = wordMasteryRepository.findByUserIdAndWordId(userId, wordId)
+                        .map(WordMastery::getMasteryProbability).orElse(0.5);
+            }
+            p = Math.max(0.0, Math.min(1.0, p));
+            p = Math.round(p * 10000.0) / 10000.0;
+            wordMasteryRepository.upsertMastery(userId, wordId, p, "v1.0");
+        } catch (Exception ignored) { }
     }
 
     // Bug2 fixed: always creates a new record, never mutates existing ones
@@ -99,25 +125,21 @@ public class StudyController {
             int prevRepetition = (latest != null && latest.getRepetition() != null) ? latest.getRepetition() : 0;
             int prevIntervalDays = (latest != null && latest.getIntervalDays() != null) ? latest.getIntervalDays() : 0;
 
-            // 质量评分映射：优先使用 pyBKT 概率映射；未提供则回退（正确=5，错误=2）
-            int q = resolveSm2Quality(isCorrect, request);
+            String difficulty = (word.getDifficulty() != null) ? word.getDifficulty() : "medium";
+            int q = resolveSm2Quality(isCorrect, userId, wordId, difficulty);
             Sm2Scheduler.Result sm2 = Sm2Scheduler.next(prevEF, prevRepetition, prevIntervalDays, q);
 
-            // 连续答对次数（用于 UI/统计兼容）
             int prevConsecutive = (latest != null && latest.getConsecutiveCorrect() != null) ? latest.getConsecutiveCorrect() : 0;
             record.setConsecutiveCorrect(isCorrect ? prevConsecutive + 1 : 0);
-
-            // 写入 SM-2 状态
             record.setEaseFactor(sm2.easeFactor);
             record.setRepetition(sm2.repetition);
             record.setIntervalDays(sm2.intervalDays);
-
-            // reviewStage 兼容展示：用 repetition 表示
             record.setReviewStage(sm2.repetition);
-
             record.setNextReviewTime(LocalDateTime.now().plusDays(sm2.intervalDays));
+            record.setQScore(q);
 
             studyRecordRepository.save(record);
+            updateWordMastery(userId, wordId, difficulty);
             if (isCorrect && "new".equals(studyType)) {
                 user.setTotalWords(user.getTotalWords() + 1);
                 userRepository.save(user);
@@ -127,6 +149,7 @@ public class StudyController {
             response.put("nextReviewTime", record.getNextReviewTime());
             response.put("reviewStage", record.getReviewStage());
             response.put("consecutiveCorrect", record.getConsecutiveCorrect());
+            response.put("qScore", q);
             response.put("message", "saved"); return response;
         } catch (Exception e) {
             Map<String, Object> err = new HashMap<>();
@@ -181,7 +204,8 @@ public class StudyController {
 
             record.setIsCorrect(isCorrect);
 
-            int q = resolveSm2Quality(isCorrect, request);
+            String difficulty = (word.getDifficulty() != null) ? word.getDifficulty() : "medium";
+            int q = resolveSm2Quality(isCorrect, userId, wordId, difficulty);
             Sm2Scheduler.Result sm2 = Sm2Scheduler.next(prevEF, prevRepetition, prevIntervalDays, q);
 
             record.setConsecutiveCorrect(isCorrect ? prevConsecutive + 1 : 0);
@@ -190,12 +214,16 @@ public class StudyController {
             record.setIntervalDays(sm2.intervalDays);
             record.setReviewStage(sm2.repetition);
             record.setNextReviewTime(LocalDateTime.now().plusDays(sm2.intervalDays));
+            record.setQScore(q);
 
             studyRecordRepository.save(record);
+            updateWordMastery(userId, wordId, difficulty);
+
             response.put("status", "success"); response.put("message", "saved");
             response.put("nextReviewTime", record.getNextReviewTime());
             response.put("consecutiveCorrect", record.getConsecutiveCorrect());
             response.put("reviewStage", record.getReviewStage());
+            response.put("qScore", q);
         } catch (Exception e) {
             response.put("status", "error"); response.put("message", e.getMessage());
         }
@@ -294,17 +322,12 @@ public class StudyController {
                 .collect(Collectors.toList());
     }
 
-    // Bug棰濆 fixed: only return words whose MOST RECENT record is incorrect
+    // 返回用户所有错题记录（历史全量）
     @GetMapping("/{userId}/wrong-words")
     public List<StudyRecord> getWrongWords(@PathVariable Long userId) {
-        List<StudyRecord> all = studyRecordRepository.findByUserId(userId);
-        Map<Long, StudyRecord> latestPerWord = new LinkedHashMap<>();
-        all.stream()
-                .sorted((a, b) -> a.getStudyTime().compareTo(b.getStudyTime()))
-                .forEach(r -> latestPerWord.put(r.getWord().getId(), r));
-        return latestPerWord.values().stream()
-                .filter(r -> Boolean.FALSE.equals(r.getIsCorrect()))
-                .collect(Collectors.toList());
+        List<StudyRecord> records = studyRecordRepository.findByUserIdAndIsCorrectFalse(userId);
+        records.sort(Comparator.comparing(StudyRecord::getStudyTime).reversed());
+        return records;
     }
 
     @GetMapping("/{userId}/total-records")
@@ -318,92 +341,64 @@ public class StudyController {
     public Map<String, Object> getUserStats(@PathVariable Long userId) {
         Map<String, Object> response = new HashMap<>();
         try {
-            List<StudyRecord> allRecords = studyRecordRepository.findByUserId(userId);
-            if (allRecords.isEmpty()) {
-                response.put("status", "success"); response.put("totalWords", 0L);
-                response.put("masteredWords", 0L); response.put("totalRecords", 0L);
-                response.put("correctCount", 0L); response.put("accuracy", 0);
-                response.put("studiedDays", 0); response.put("consecutiveDays", 0);
-                response.put("totalMinutes", 0L);
-                response.put("categoryStats", new ArrayList<>());
-                response.put("dailyStats", new ArrayList<>()); return response;
-            }
-            long totalRecords = allRecords.size();
-            long correctCount = allRecords.stream()
-                    .filter(r -> Boolean.TRUE.equals(r.getIsCorrect())).count();
-            int accuracy = (int) Math.round(correctCount * 100.0 / totalRecords);
-            long totalWords = allRecords.stream()
-                    .map(r -> r.getWord().getId()).distinct().count();
-            long masteredWords = allRecords.stream()
-                    .filter(r -> Boolean.TRUE.equals(r.getIsCorrect()))
-                    .map(r -> r.getWord().getId()).distinct().count();
-            Map<String, List<StudyRecord>> byDay = allRecords.stream()
-                    .collect(Collectors.groupingBy(
-                            r -> r.getStudyTime().toLocalDate().toString()));
-            int studiedDays = byDay.size();
-            int consecutiveDays = 0;
-            LocalDate checkDate = LocalDate.now();
-            while (byDay.containsKey(checkDate.toString())) {
-                consecutiveDays++; checkDate = checkDate.minusDays(1);
-            }
-            if (consecutiveDays == 0) {
-                checkDate = LocalDate.now().minusDays(1);
-                while (byDay.containsKey(checkDate.toString())) {
-                    consecutiveDays++; checkDate = checkDate.minusDays(1);
-                }
-            }
-            long totalMinutes = totalRecords * 30 / 60;
-            Map<String, Long> catTotal = allRecords.stream()
-                    .collect(Collectors.groupingBy(
-                            r -> r.getWord().getCategory(), Collectors.counting()));
-            Map<String, Long> catCorrect = allRecords.stream()
-                    .filter(r -> Boolean.TRUE.equals(r.getIsCorrect()))
-                    .collect(Collectors.groupingBy(
-                            r -> r.getWord().getCategory(), Collectors.counting()));
-            List<Map<String, Object>> categoryStats = new ArrayList<>();
-            for (Map.Entry<String, Long> entry : catTotal.entrySet()) {
-                String cat = entry.getKey(); long ct = entry.getValue();
-                long cc = catCorrect.getOrDefault(cat, 0L);
-                long cw = allRecords.stream()
-                        .filter(r -> cat.equals(r.getWord().getCategory()))
-                        .map(r -> r.getWord().getId()).distinct().count();
-                Map<String, Object> cs = new HashMap<>();
-                cs.put("category", cat); cs.put("totalRecords", ct);
-                cs.put("learnedWords", cw);
-                cs.put("accuracy", ct > 0 ? (int) Math.round(cc * 100.0 / ct) : 0);
-                categoryStats.add(cs);
-            }
-            categoryStats.sort((a, b) ->
-                    ((Long) b.get("learnedWords")).compareTo((Long) a.get("learnedWords")));
-            List<Map<String, Object>> dailyStats = new ArrayList<>();
-            LocalDate today = LocalDate.now();
-            for (int i = 13; i >= 0; i--) {
-                LocalDate date = today.minusDays(i); String dateStr = date.toString();
-                List<StudyRecord> dayRecs = byDay.getOrDefault(dateStr, new ArrayList<>());
-                long dayCorrect = dayRecs.stream()
-                        .filter(r -> Boolean.TRUE.equals(r.getIsCorrect())).count();
-                long dayWords = dayRecs.stream()
-                        .map(r -> r.getWord().getId()).distinct().count();
-                Map<String, Object> ds = new HashMap<>();
-                String lbl = i == 0 ? "\u4eca" : i == 1 ? "\u6628"
-                        : date.getMonthValue() + "/" + date.getDayOfMonth();
-                ds.put("date", dateStr); ds.put("dayLabel", lbl);
-                ds.put("totalRecords", (long) dayRecs.size());
-                ds.put("correctCount", dayCorrect); ds.put("learnedWords", dayWords);
-                ds.put("accuracy", !dayRecs.isEmpty()
-                        ? (int) Math.round(dayCorrect * 100.0 / dayRecs.size()) : 0);
-                ds.put("hasStudy", !dayRecs.isEmpty());
-                dailyStats.add(ds);
-            }
-            response.put("status", "success"); response.put("totalWords", totalWords);
-            response.put("masteredWords", masteredWords); response.put("totalRecords", totalRecords);
-            response.put("correctCount", correctCount); response.put("accuracy", accuracy);
-            response.put("studiedDays", studiedDays); response.put("consecutiveDays", consecutiveDays);
-            response.put("totalMinutes", totalMinutes);
-            response.put("categoryStats", categoryStats); response.put("dailyStats", dailyStats);
+            Map<String, Object> stats = studyStatsService.buildUserStats(userId);
+            response.put("status", "success");
+            response.putAll(stats);
         } catch (Exception e) {
             response.put("status", "error");
             response.put("message", "stats error: " + e.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 获取用户所有单词的掌握概率列表（用于前端展示）
+     * GET /api/study/{userId}/mastery
+     */
+    @GetMapping("/{userId}/mastery")
+    public Map<String, Object> getUserMastery(@PathVariable Long userId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<WordMastery> masteryList = wordMasteryRepository.findAll().stream()
+                    .filter(m -> m.getUserId().equals(userId))
+                    .collect(Collectors.toList());
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (WordMastery wm : masteryList) {
+                Map<String, Object> item = new HashMap<>();
+                item.put("wordId", wm.getWordId());
+                item.put("masteryProbability", wm.getMasteryProbability());
+                item.put("modelVersion", wm.getModelVersion());
+                item.put("updatedAt", wm.getUpdatedAt());
+                // 根据概率给出掌握等级标签
+                double p = wm.getMasteryProbability();
+                String level;
+                if (p >= 0.85) level = "熟练掌握";
+                else if (p >= 0.70) level = "基本掌握";
+                else if (p >= 0.50) level = "初步了解";
+                else level = "需要加强";
+                item.put("masteryLevel", level);
+                // 查单词信息
+                wordRepository.findById(wm.getWordId()).ifPresent(w -> {
+                    item.put("word", w.getWord());
+                    item.put("meaning", w.getMeaning());
+                    item.put("category", w.getCategory());
+                    item.put("difficulty", w.getDifficulty());
+                });
+                result.add(item);
+            }
+            // 按概率从低到高排序（优先展示需要加强的）
+            result.sort((a, b) ->
+                    Double.compare((Double) a.get("masteryProbability"),
+                                   (Double) b.get("masteryProbability")));
+            response.put("status", "success");
+            response.put("masteryList", result);
+            response.put("totalWords", result.size());
+            double avgP = result.stream()
+                    .mapToDouble(m -> (Double) m.get("masteryProbability")).average().orElse(0);
+            response.put("averageMastery", Math.round(avgP * 10000.0) / 10000.0);
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
         }
         return response;
     }

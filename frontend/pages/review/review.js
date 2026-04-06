@@ -35,7 +35,8 @@ Page({
     showSessionComplete: false,
     sessionCorrect: 0,
     sessionTotal: 0,
-    sessionAccuracy: 0
+    sessionAccuracy: 0,
+    soundType: 2  // 1=英音 2=美音
   },
 
   onLoad: function() {},
@@ -186,6 +187,7 @@ Page({
       isCorrect: false,
       isFavorited: isFav
     });
+    setTimeout(() => this.playSound(), 300);
   },
 
   // ==================== 选项与答题 ====================
@@ -425,6 +427,38 @@ Page({
       var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
     }
     return arr;
+  },
+
+  playSound: function() {
+    const word = this.data.currentWord && this.data.currentWord.word;
+    if (!word) return;
+    if (!this._audioCtx) {
+      this._audioCtx = wx.createInnerAudioContext();
+      this._audioCtx.onError(() => {
+        wx.showToast({ title: '发音加载失败', icon: 'none', duration: 1200 });
+      });
+    }
+    this._audioCtx.stop();
+    this._audioCtx.src = 'http://dict.youdao.com/dictvoice?audio='
+      + encodeURIComponent(word) + '&type=' + (this.data.soundType || 2);
+    this._audioCtx.play();
+  },
+
+  toggleSoundType: function() {
+    const newType = this.data.soundType === 2 ? 1 : 2;
+    this.setData({ soundType: newType });
+    wx.showToast({
+      title: newType === 1 ? '已切换为英音' : '已切换为美音',
+      icon: 'none', duration: 800
+    });
+    this.playSound();
+  },
+
+  onUnload: function() {
+    if (this._audioCtx) {
+      this._audioCtx.destroy();
+      this._audioCtx = null;
+    }
   },
 
   goToStudy: function() {

@@ -39,6 +39,58 @@
   line-height: 1;
 }
 
+/* 发音按钮 */
+.word-pron-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 8rpx;
+}
+
+.sound-btn {
+  width: 60rpx; height: 60rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.sound-btn:active {
+  background: rgba(59,130,246,0.25);
+  transform: scale(0.92);
+}
+
+.sound-icon {
+  font-size: 34rpx;
+  line-height: 1;
+}
+
+.sound-type-btn {
+  width: 56rpx; height: 56rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.sound-type-btn:active {
+  background: rgba(59,130,246,0.25);
+  transform: scale(0.92);
+}
+
+.sound-type-text {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #93c5fd;
+  line-height: 1;
+}
+
 .star-btn.active .star-icon {
   color: var(--color-accent);
 }

@@ -3,7 +3,8 @@
 训练集: D:\WordMemory_System\python\bkt_outputs\train_split.csv
 测试集: D:\WordMemory_System\python\bkt_outputs\test_split.csv
 预测结果: D:\WordMemory_System\python\bkt_outputs\test_predictions.csv
-参数文件: 未保存（当前pyBKT版本不支持或写入失败）
+参数JSON: 未保存（当前pyBKT版本不支持或写入失败）
+参数CSV: D:\WordMemory_System\python\bkt_outputs\bkt_params_table.csv
 
 样本总数: 20000
 训练集样本: 15648
@@ -12,7 +13,39 @@
 技能数: 15
 用户数: 649
 
-Accuracy: 0.8063
+Accuracy: 0.8290
 Baseline(全预测正确=1) Accuracy: 0.8180
-AUC: 0.7534
+AUC: 0.7899
 预测列: correct_predictions
+
+=== 四参数摘要（每个 Skill）===
+  Addition and Subtraction Fractions: prior=nan, learns=nan, guesses=nan, slips=nan
+  Addition and Subtraction Integers: prior=nan, learns=nan, guesses=nan, slips=nan
+  Area Rectangle: prior=nan, learns=nan, guesses=nan, slips=nan
+  Area Trapezoid: prior=nan, learns=nan, guesses=nan, slips=nan
+  Area Triangle: prior=nan, learns=nan, guesses=nan, slips=nan
+  Conversion of Fraction Decimals Percents: prior=nan, learns=nan, guesses=nan, slips=nan
+  Equation Solving More Than Two Steps: prior=nan, learns=nan, guesses=nan, slips=nan
+  Equation Solving Two or Fewer Steps: prior=nan, learns=nan, guesses=nan, slips=nan
+  Multiplication and Division Integers: prior=nan, learns=nan, guesses=nan, slips=nan
+  Ordering Fractions: prior=nan, learns=nan, guesses=nan, slips=nan
+  Percent Of: prior=nan, learns=nan, guesses=nan, slips=nan
+  Proportion: prior=nan, learns=nan, guesses=nan, slips=nan
+  Venn Diagram: prior=nan, learns=nan, guesses=nan, slips=nan
+  Volume Cylinder: prior=nan, learns=nan, guesses=nan, slips=nan
+  Volume Rectangular Prism: prior=nan, learns=nan, guesses=nan, slips=nan
+  Addition and Subtraction Fractions: prior=0.9661, learns=0.0308, guesses=0.5576, slips=0.2607
+  Addition and Subtraction Integers: prior=0.8101, learns=0.0056, guesses=0.4304, slips=0.1191
+  Area Rectangle: prior=0.8837, learns=0.0000, guesses=0.0000, slips=0.0107
+  Area Trapezoid: prior=0.7405, learns=0.1111, guesses=0.0079, slips=0.1629
+  Area Triangle: prior=0.8620, learns=0.0000, guesses=0.0121, slips=0.0000
+  Conversion of Fraction Decimals Percents: prior=0.5761, learns=0.3328, guesses=0.2944, slips=0.2391
+  Equation Solving More Than Two Steps: prior=0.2757, learns=0.9463, guesses=0.5369, slips=0.0637
+  Equation Solving Two or Fewer Steps: prior=0.3361, learns=0.3787, guesses=0.5541, slips=0.0050
+  Multiplication and Division Integers: prior=0.9861, learns=0.4559, guesses=0.8966, slips=0.1687
+  Ordering Fractions: prior=0.5652, learns=0.0073, guesses=0.5636, slips=0.0349
+  Percent Of: prior=0.6842, learns=0.2997, guesses=0.0181, slips=0.3617
+  Proportion: prior=0.6727, learns=0.2716, guesses=0.1319, slips=0.1862
+  Venn Diagram: prior=0.2129, learns=0.4088, guesses=0.3042, slips=0.0876
+  Volume Cylinder: prior=0.4037, learns=0.1149, guesses=0.0409, slips=0.0569
+  Volume Rectangular Prism: prior=0.8522, learns=0.2106, guesses=0.0372, slips=0.0038

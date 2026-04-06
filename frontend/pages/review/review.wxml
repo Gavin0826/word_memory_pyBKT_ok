@@ -27,7 +27,15 @@
         </view>
       </view>
       <text class="word-text">{{currentWord.word}}</text>
-      <text class="word-pron" wx:if="{{currentWord.pronunciation}}">[{{currentWord.pronunciation}}]</text>
+      <view class="word-pron-row">
+        <text class="word-pron" wx:if="{{currentWord.pronunciation}}">[{{currentWord.pronunciation}}]</text>
+        <view class="sound-type-btn" bindtap="toggleSoundType">
+          <text class="sound-type-text">{{soundType === 2 ? '美' : '英'}}</text>
+        </view>
+        <view class="sound-btn" bindtap="playSound">
+          <text class="sound-icon">🔊</text>
+        </view>
+      </view>
 
       <!-- 忘记后显示释义 -->
       <view class="forgot-answer" wx:if="{{showAnswer}}">

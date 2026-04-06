@@ -11,6 +11,8 @@ Page({
     cet6Learned: 0,
     totalRecords: 0,
     correctRate: 0,
+    totalWords: 0,
+    studiedDays: 0,
     loading: false
   },
 
@@ -32,7 +34,6 @@ Page({
     if (!userId) return;
     this.setData({ loading: true });
 
-    // 并发请求用户信息和学习记录
     const baseUrl = app.globalData.apiBaseUrl;
     let done = 0;
     const finish = () => { done++; if (done === 2) this.setData({ loading: false }); };
@@ -50,32 +51,25 @@ Page({
       fail: finish
     });
 
-    // 2. 学习记录
+    // 2. 学习统计（与用户端一致）
     wx.request({
-      url: baseUrl + '/api/study/' + userId + '/review-words',
+      url: baseUrl + '/api/study/' + userId + '/stats',
       method: 'GET',
       success: (res) => {
-        if (Array.isArray(res.data)) {
-          const records = res.data;
-          const total = records.length;
-          const correct = records.filter(r => r.isCorrect).length;
-          const rate = total > 0 ? Math.round(correct / total * 100) : 0;
+        if (res.data && res.data.status === 'success') {
+          const d = res.data;
+          const categoryStats = d.categoryStats || [];
+          const cet4 = categoryStats.find(c => c.category === 'CET-4');
+          const cet6 = categoryStats.find(c => c.category === 'CET-6');
 
-          // 按词库分类统计已学单词
-          const cet4 = new Set();
-          const cet6 = new Set();
-          records.forEach(r => {
-            if (r.word) {
-              if (r.word.category === 'CET-4') cet4.add(r.word.id);
-              if (r.word.category === 'CET-6') cet6.add(r.word.id);
-            }
-          });
           this.setData({
-            studyRecords: records.slice(0, 20),
-            totalRecords: total,
-            correctRate: rate,
-            cet4Learned: cet4.size,
-            cet6Learned: cet6.size
+            studyRecords: [],
+            totalRecords: d.totalRecords || 0,
+            correctRate: d.accuracy || 0,
+            totalWords: d.masteredWords || 0,
+            studiedDays: d.studiedDays || 0,
+            cet4Learned: cet4 ? (cet4.learnedWords || 0) : 0,
+            cet6Learned: cet6 ? (cet6.learnedWords || 0) : 0
           });
         }
         finish();

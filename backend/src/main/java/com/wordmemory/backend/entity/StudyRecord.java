@@ -48,6 +48,9 @@ public class StudyRecord {
 
     private LocalDateTime nextReviewTime; // 下次复习时间
 
+    /** 本次实际使用的 SM-2 质量分 q（2/3/4/5），便于调试与论文分析 */
+    private Integer qScore;
+
     @PrePersist
     protected void onCreate() {
         // studyTime is set explicitly in the controller

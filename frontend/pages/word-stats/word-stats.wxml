@@ -126,6 +126,33 @@
     </view>
   </view>
 
+  <!-- pyBKT 掌握概率展示 -->
+  <view class="section-card" wx:if="{{showMastery}}">
+    <view class="mastery-header">
+      <text class="section-title">🧠 AI 掌握概率分析</text>
+      <text class="mastery-avg">平均掌握度 {{averageMastery}}%</text>
+    </view>
+    <view class="mastery-list">
+      <block wx:for="{{masteryList}}" wx:key="wordId">
+        <view class="mastery-item">
+          <view class="mastery-word-info">
+            <text class="mastery-word">{{item.word}}</text>
+            <text class="mastery-meaning">{{item.meaning}}</text>
+          </view>
+          <view class="mastery-right">
+            <view class="mastery-bar-wrap">
+              <view class="mastery-bar-fill" style="width: {{item.masteryProbability * 100}}%"></view>
+            </view>
+            <view class="mastery-meta">
+              <text class="mastery-prob">{{item.masteryProbability * 100}}%</text>
+              <text class="mastery-level level-{{item.masteryLevel === '熟练掌握' ? 'high' : item.masteryLevel === '基本掌握' ? 'mid' : item.masteryLevel === '初步了解' ? 'low' : 'weak'}}">{{item.masteryLevel}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
 </view>
 
 <!-- 加载中 -->
